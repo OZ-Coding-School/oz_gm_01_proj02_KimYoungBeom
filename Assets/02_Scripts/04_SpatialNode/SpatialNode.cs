@@ -7,13 +7,13 @@ public class SpatialNode : PoolableComponent, INode
 {
     [Header("Node Shape")]
     [SerializeField] private ENodeShape _nodeShape;
-
-    [Header("Node Data")]
-    [SerializeField] private NodeData _data;
+    [SerializeField] private ENodeState _nodeState;
 
     [Header("Visuals")]
     [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private VisualEffect _vfxGraph;
+
+    private NodeData _data;
 
     private MaterialPropertyBlock _propBlock;
     private static readonly int DissolveAmount = Shader.PropertyToID("_DissolveAmount");
@@ -22,19 +22,16 @@ public class SpatialNode : PoolableComponent, INode
     public Vector2Int GridCoordinate => _data.gridCoord;
     public List<Vector2Int> MoveableDirections => _data.allowedDirs;
     public ENodeShape NodeShape => _nodeShape;
-
+    public ENodeState NodeState => _nodeState;
     public System.Action OnStateChanged { get; set; }
 
-
-    private void ResetVisuals()
+    public void InjectData(NodeData data)
     {
-        if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
-
-        _propBlock.SetFloat(DissolveAmount, 0f);
-        _meshRenderer.SetPropertyBlock(_propBlock);
-
-        _meshRenderer.enabled = true;
+        _data = data;
+        _nodeState = data.nodeState;
+        OnStateChanged?.Invoke();
     }
+
     public override void OnSpawn()
     {
         ResetVisuals();
@@ -48,7 +45,15 @@ public class SpatialNode : PoolableComponent, INode
     {
         StartCoroutine(FoldingRoutine(duration));
     }
+    private void ResetVisuals()
+    {
+        if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
 
+        _propBlock.SetFloat(DissolveAmount, 0f);
+        _meshRenderer.SetPropertyBlock(_propBlock);
+
+        _meshRenderer.enabled = true;
+    }
     private IEnumerator FoldingRoutine(float duration)
     {
         float elapsed = 0;
@@ -61,21 +66,4 @@ public class SpatialNode : PoolableComponent, INode
             yield return null;
         }
     }
-
-    public void SetupDirectionsByShape()
-    {
-        _data.allowedDirs = _nodeShape switch
-        {
-            ENodeShape.Cross => new() { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right },
-            ENodeShape.Horizontal => new() { Vector2Int.left, Vector2Int.right },
-            ENodeShape.Vertical => new() { Vector2Int.up, Vector2Int.down },
-            ENodeShape.UpRight => new() { Vector2Int.up, Vector2Int.right },
-            ENodeShape.UpLeft => new() { Vector2Int.up, Vector2Int.left },
-            ENodeShape.DownRight => new() { Vector2Int.down, Vector2Int.right },
-            ENodeShape.DownLeft => new() { Vector2Int.down, Vector2Int.left },
-            _ => new()
-        };
-    }
-
-    public void SetGridCoordinate(Vector2Int coord) => _data.gridCoord = coord;
 }

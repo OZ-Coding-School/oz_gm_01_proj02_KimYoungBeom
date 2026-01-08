@@ -23,3 +23,9 @@ public interface INode
     List<Vector2Int> MoveableDirections { get; }
     Action OnStateChanged { get; set; }
 }
+
+public interface ICommand
+{
+    void Execute();
+    void UnDo();
+}

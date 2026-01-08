@@ -164,6 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Managers
   poolManagerPrefab: {fileID: 6404493924222254013, guid: 50d1609d435f59e448007854c512eeee, type: 3}
+  gameManagerPrefab: {fileID: 222554334650321997, guid: e1289f64fdd00f6468215f640e64335e, type: 3}
+  stageManagerPrefab: {fileID: 8346086663478004641, guid: f5e988124bc967f4e821444c5f2f4ccb, type: 3}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,7 +253,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 2, z: -2}
+  m_LocalPosition: {x: -2, y: 5, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -486,8 +488,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1386119005}
+  - component: {fileID: 1386119006}
   m_Layer: 0
-  m_Name: SpatialNodes
+  m_Name: LevelGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -508,6 +511,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1386119006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386119004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a77c0ffb4cd3fe4fb875bf6db43af79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelGenerator
+  _nodePoolDataList:
+  - {fileID: 11400000, guid: 5f53141aff8e4064d93fa3a9e3736c39, type: 2}
+  - {fileID: 11400000, guid: 273c14d55b9380447b10891486a57d64, type: 2}
+  - {fileID: 11400000, guid: fc66ddc571da249498a14a5013b390d2, type: 2}
+  - {fileID: 11400000, guid: c43fdbdea17d9c243adeb66c0d7aa852, type: 2}
+  - {fileID: 11400000, guid: d2bc31dcd97cbd04cbd7756f5c3a24de, type: 2}
+  - {fileID: 11400000, guid: 46db43458b369be4b8dfd8fbb6765966, type: 2}
+  - {fileID: 11400000, guid: 3a38bfa764feefd44a63422485649040, type: 2}
+  - {fileID: 11400000, guid: 2f9fa17c7d15fcb47adb1553a2ae8dd3, type: 2}
+  - {fileID: 11400000, guid: bb8c6df9e3762954396337e378102c9e, type: 2}
+  - {fileID: 11400000, guid: 612d1ab4494e6184a841f09bfccd251d, type: 2}
+  - {fileID: 11400000, guid: 69c50220e14890f4d885ca9c2f499899, type: 2}
+  _playerPrefab: {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -31,19 +31,18 @@ public class NodeGraphBaker : EditorWindow
         SpatialNode[] sceneNodes = nodeRoot.GetComponentsInChildren<SpatialNode>();
         foreach (var node in sceneNodes)
         {
-            node.SetupDirectionsByShape(); // 모양에 따른 allowedDirs 설정 [cite: 73]
-
             Vector2Int calcCoord = new Vector2Int(
                 Mathf.RoundToInt(node.transform.position.x / gridUnit),
                 Mathf.RoundToInt(node.transform.position.z / gridUnit)
             );
-            node.SetGridCoordinate(calcCoord);
 
             NodeData newData = new NodeData
             {
                 worldPos = node.transform.position,
                 gridCoord = calcCoord,
-                allowedDirs = new List<Vector2Int>(node.MoveableDirections)
+                allowedDirs = GetDirectionsFromShape(node.NodeShape),
+                nodeShape = node.NodeShape,
+                nodeState = node.NodeState,
             };
             targetGraph.AddNode(newData);
         }
@@ -51,6 +50,25 @@ public class NodeGraphBaker : EditorWindow
         EditorUtility.SetDirty(targetGraph);
         AssetDatabase.SaveAssets();
         Utils.Log($"{targetGraph.Nodes.Count}개의 노드 데이터가 성공적으로 베이킹되었습니다.");
+    }
+
+    private List<Vector2Int> GetDirectionsFromShape(ENodeShape shape)
+    {
+        return shape switch
+        {
+            ENodeShape.Cross => new() { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right },
+            ENodeShape.Horizontal => new() { Vector2Int.left, Vector2Int.right },
+            ENodeShape.Vertical => new() { Vector2Int.up, Vector2Int.down },
+            ENodeShape.UpRight => new() { Vector2Int.up, Vector2Int.right },
+            ENodeShape.UpLeft => new() { Vector2Int.up, Vector2Int.left },
+            ENodeShape.DownRight => new() { Vector2Int.down, Vector2Int.right },
+            ENodeShape.DownLeft => new() { Vector2Int.down, Vector2Int.left },
+            ENodeShape.TUp => new() { Vector2Int.down, Vector2Int.left, Vector2Int.right },
+            ENodeShape.TDown => new() { Vector2Int.up, Vector2Int.left, Vector2Int.right },
+            ENodeShape.TRight => new() { Vector2Int.up, Vector2Int.down, Vector2Int.left },
+            ENodeShape.TLeft => new() { Vector2Int.up, Vector2Int.down, Vector2Int.right },
+            _ => new()
+        };
     }
 }
 #endif

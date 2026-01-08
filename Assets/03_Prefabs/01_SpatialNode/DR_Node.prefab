@@ -174,9 +174,7 @@ LineRenderer:
   m_MaskInteraction: 0
   m_Positions:
   - {x: 0, y: -0.5, z: 0}
-  - {x: 0, y: -0.4, z: 0}
   - {x: 0, y: 0, z: 0}
-  - {x: 0.4, y: 0, z: 0}
   - {x: 0.5, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
@@ -407,14 +405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpatialNode
   _nodeShape: 5
-  _data:
-    worldPos: {x: 0, y: 0, z: 0}
-    gridCoord: {x: 0, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
+  _nodeState: 0
   _meshRenderer: {fileID: 7748497303834063980}
   _vfxGraph: {fileID: 3178808822187306880}
 --- !u!114 &5450475005223856264

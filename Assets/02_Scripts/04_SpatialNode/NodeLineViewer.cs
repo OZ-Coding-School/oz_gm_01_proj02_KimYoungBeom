@@ -37,36 +37,47 @@ public class NodeLineViewer : MonoBehaviour
 
         List<Vector3> points = new List<Vector3>();
         float half = 0.5f;
-        float r = circleRadius;
 
         Vector3 center = Vector3.zero;
-        Vector3 uS = new Vector3(0, r, 0); Vector3 uE = new Vector3(0, half, 0);
-        Vector3 dS = new Vector3(0, -r, 0); Vector3 dE = new Vector3(0, -half, 0);
-        Vector3 lS = new Vector3(-r, 0, 0); Vector3 lE = new Vector3(-half, 0, 0);
-        Vector3 rS = new Vector3(r, 0, 0); Vector3 rE = new Vector3(half, 0, 0);
+        Vector3 up = new Vector3(0, half, 0);
+        Vector3 down = new Vector3(0, -half, 0);
+        Vector3 left = new Vector3(-half, 0, 0);
+        Vector3 right = new Vector3(half, 0, 0);
 
         switch (shape)
         {
             case ENodeShape.Cross:
-                points.AddRange(new[] { uE, uS, dS, dE, dS, center, lS, lE, lS, center, rS, rE });
+                points.AddRange(new[] { up, center, down, center, left, center, right });
                 break;
             case ENodeShape.Horizontal:
-                points.AddRange(new[] { lE, lS, rS, rE });
+                points.AddRange(new[] { left, right });
                 break;
             case ENodeShape.Vertical:
-                points.AddRange(new[] { uE, uS, dS, dE });
+                points.AddRange(new[] { up, down });
                 break;
             case ENodeShape.UpRight:
-                points.AddRange(new[] { uE, uS, center, rS, rE });
+                points.AddRange(new[] { up, center, right });
                 break;
             case ENodeShape.UpLeft:
-                points.AddRange(new[] { uE, uS, center, lS, lE });
+                points.AddRange(new[] { up, center, left });
                 break;
             case ENodeShape.DownRight:
-                points.AddRange(new[] { dE, dS, center, rS, rE });
+                points.AddRange(new[] { down, center, right });
                 break;
             case ENodeShape.DownLeft:
-                points.AddRange(new[] { dE, dS, center, lS, lE });
+                points.AddRange(new[] { down, center, left });
+                break;
+            case ENodeShape.TUp:
+                points.AddRange(new[] { left, center, right, center, down });
+                break;
+            case ENodeShape.TDown:
+                points.AddRange(new[] { left, center, right, center, up });
+                break;
+            case ENodeShape.TRight:
+                points.AddRange(new[] { up, center, down, center, left });
+                break;
+            case ENodeShape.TLeft:
+                points.AddRange(new[] { up, center, down, center, right });
                 break;
         }
 
