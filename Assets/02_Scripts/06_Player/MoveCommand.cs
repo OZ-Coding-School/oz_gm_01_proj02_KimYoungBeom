@@ -8,12 +8,14 @@ public class MoveCommand : ICommand
     private SpatialNode _toNode;
     private float _duration;
 
+    public Vector2Int MoveDir { get; private set; }
     public MoveCommand(PlayerController player, SpatialNode from, SpatialNode to, float duration)
     {
         _player = player;
         _fromNode = from;
         _toNode = to;
         _duration = duration;
+        MoveDir = to.GridCoordinate - from.GridCoordinate;
     }
 
     public void Execute()
@@ -34,7 +36,7 @@ public class MoveCommand : ICommand
         Vector3 undoPos = _fromNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
 
         _player.transform.DOMove(undoPos, _duration)
-            .SetEase(Ease.OutQuad)
+            .SetEase(Ease.InOutSine)
             .OnComplete(() =>
             {
                 _player.SetCurrentNode(_fromNode);

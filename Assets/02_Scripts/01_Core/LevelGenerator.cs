@@ -4,7 +4,8 @@ using System.Collections.Generic;
 public class LevelGenerator : MonoBehaviour
 {
     [SerializeField] private List<PoolableObjSO> _nodePoolDataList;
-    [SerializeField] private PoolableObjSO _playerPrefab;
+    [SerializeField] private PoolableObjSO _playerPoolData;
+    [SerializeField] private PoolableObjSO _goalPoolData;
 
     private Dictionary<ENodeShape, PoolableObjSO> _shapeMap;
     private Dictionary<Vector3Int, SpatialNode> _nodeMap = new Dictionary<Vector3Int, SpatialNode>();
@@ -57,6 +58,10 @@ public class LevelGenerator : MonoBehaviour
                 {
                     startNode = node;
                 }
+                if (node.NodeState == ENodeState.Finish)
+                {
+                    Managers.Pool.Spawn<Piece_Goal>(_goalPoolData, node.WorldPosition);
+                }
             }
             else
             {
@@ -65,7 +70,7 @@ public class LevelGenerator : MonoBehaviour
         }
         if (startNode != null)
         {
-            PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPrefab, startNode.WorldPosition);
+            PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldPosition);
             player.Init(_nodeMap, startNode);
         }
     }

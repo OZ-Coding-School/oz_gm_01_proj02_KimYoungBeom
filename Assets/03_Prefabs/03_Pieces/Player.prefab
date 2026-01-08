@@ -97,4 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 967bda30863e6cc4faed5cee6e533703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _moveDuration: 0.2
+  _moveDuration: 0.867
