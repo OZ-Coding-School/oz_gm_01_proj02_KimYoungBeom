@@ -20,18 +20,32 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.Move.performed += OnMovePerformed;
         _inputActions.Player.Move.canceled += OnMoveCanceled;
         _inputActions.Player.UnDo.performed += OnUnDoPerformed;
+        _inputActions.Player.ReLoadScene.performed += OnReloadScene;
+        _inputActions.Player.Escape.performed += OnEscape;
     }
     private void OnDisable()
     {
         _inputActions.Player.Move.performed -= OnMovePerformed;
         _inputActions.Player.Move.canceled -= OnMoveCanceled;
         _inputActions.Player.UnDo.performed -= OnUnDoPerformed;
+        _inputActions.Player.ReLoadScene.performed -= OnReloadScene;
+        _inputActions.Player.Escape.performed -= OnEscape;
 
         _inputActions.Disable();
     }
     private void OnDestroy()
     {
         _inputActions.Dispose();
+    }
+    private void OnReloadScene(InputAction.CallbackContext context)
+    {
+        //재시작 키 'R'
+        Managers.Game.LoadStageScene(Managers.Game.CurrentStageIndex);
+    }
+    private void OnEscape(InputAction.CallbackContext context)
+    {
+        //편의상 로비로
+        Managers.Game.LoadLobbyScene();
     }
     private void OnMovePerformed(InputAction.CallbackContext context)
     {

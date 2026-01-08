@@ -9,6 +9,7 @@ public static class Defines
     public static readonly int SAD_IDLE_HASH = Animator.StringToHash("SadIdle");
     public static readonly int VICTORY_IDLE_HASH = Animator.StringToHash("VictoryIdle");
     public static readonly int JUMP_HASH = Animator.StringToHash("Jump");
+    public static readonly int ANIM_SPEED_HASH = Animator.StringToHash("AnimSpeed");
 }
 public enum ENodeShape
 {

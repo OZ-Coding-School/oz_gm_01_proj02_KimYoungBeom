@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     }
     public void LoadStageScene(int stageIndex)
     {
+        DG.Tweening.DOTween.KillAll();
+
         CurrentStageIndex = stageIndex;
         Time.timeScale = 1.0f;
         bIsPause = false;

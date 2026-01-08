@@ -4,7 +4,7 @@ public class GoToState : PlayerState
 
     public override void Enter()
     {
-
+        _player.Anim.CrossFade(Defines.JUMP_HASH, 0.1f);
     }
     public override void Update() { }
     public override void FixedUpdate() { }

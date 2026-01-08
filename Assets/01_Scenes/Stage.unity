@@ -163,9 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65dfb3cdb77bc2641b683170c8ea87dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Managers
-  poolManagerPrefab: {fileID: 6404493924222254013, guid: 50d1609d435f59e448007854c512eeee, type: 3}
-  gameManagerPrefab: {fileID: 222554334650321997, guid: e1289f64fdd00f6468215f640e64335e, type: 3}
-  stageManagerPrefab: {fileID: 8346086663478004641, guid: f5e988124bc967f4e821444c5f2f4ccb, type: 3}
+  _poolManagerPrefab: {fileID: 0}
+  _gameManagerPrefab: {fileID: 0}
+  _stageManagerPrefab: {fileID: 0}
+  _inputManagerPrefab: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,7 +536,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bb8c6df9e3762954396337e378102c9e, type: 2}
   - {fileID: 11400000, guid: 612d1ab4494e6184a841f09bfccd251d, type: 2}
   - {fileID: 11400000, guid: 69c50220e14890f4d885ca9c2f499899, type: 2}
-  _playerPrefab: {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
+  _playerPoolData: {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
+  _goalPoolData: {fileID: 11400000, guid: e0e5c5d1f5d41634ab5cd4d2c32cb61b, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
