@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93cdde13ba3cb8418c4243496364b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpatialNode
+  poolData: {fileID: 0}
   _nodeShape: 0
   _nodeState: 0
   _meshRenderer: {fileID: 4199219763666833084}

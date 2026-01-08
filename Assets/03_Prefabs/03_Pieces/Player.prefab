@@ -97,4 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 967bda30863e6cc4faed5cee6e533703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  poolData: {fileID: 0}
   _moveDuration: 0.867
+  _sadIdleCool: 3
+  _rotateSpeed: 15
+  _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}

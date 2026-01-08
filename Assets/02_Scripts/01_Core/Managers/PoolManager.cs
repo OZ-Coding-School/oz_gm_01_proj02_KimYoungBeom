@@ -28,7 +28,9 @@ public class PoolManager : MonoBehaviour
 
             for (int i = 0; i < data.defaultCapacity; i++)
             {
-                tempObjects.Add(container.GetBase());
+                PoolableComponent prefab = container.GetBase();
+                prefab.poolData = data;
+                tempObjects.Add(prefab);
             }
 
             foreach (var obj in tempObjects)
