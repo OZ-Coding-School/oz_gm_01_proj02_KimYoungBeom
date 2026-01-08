@@ -1,14 +1,16 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerController : PoolableComponent
 {
     #region 참조
+    [Header("수치제어")]
     [SerializeField] private float _moveDuration = 0.867f;
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
+
+    [Header("이벤트 발송")]
+    [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode;
     #endregion
 
     #region 상태머신관련
@@ -40,10 +42,11 @@ public class PlayerController : PoolableComponent
     //런타임 변수
     private Dictionary<Vector3Int, SpatialNode> _nodeMap;
     private Stack<ICommand> _history = new Stack<ICommand>();
-    private Vector2Int _rotateDir = new Vector2Int();
 
     //상태관리 변수
+    private Vector2Int _rotateDir = new Vector2Int();
     private bool _isRotate = false;
+    private bool _isLastMove = false;
     #endregion
 
     #region LifeCycle
@@ -62,8 +65,6 @@ public class PlayerController : PoolableComponent
     }
     private void OnEnable()
     {
-        _stateMC.ChangeState(_idleState);
-
         Managers.Input.onMoveEvent += OnMove;
         Managers.Input.onUnDoEvent += OnUnDo;
     }
@@ -95,6 +96,7 @@ public class PlayerController : PoolableComponent
     private void InitTransitions()
     {
         //From Idle
+        _stateMC.AddTransition(_idleState, _finishState, () => _isLastMove);
         _stateMC.AddTransition(_idleState, _moveState, () => IsMoving);
 
         //From Move
@@ -146,11 +148,42 @@ public class PlayerController : PoolableComponent
 
             moveCmd.Execute();
             _history.Push(moveCmd);
+
+            NotifySpecialNode(targetNode);
         }
     }
     #endregion
 
     #region Helper 함수
+    private void NotifySpecialNode(SpatialNode node)
+    {
+        switch (node.NodeState)
+        {
+            case ENodeState.Finish:
+                _ = NotifySpecialNodeAsync(node, 0.7f);
+                break;
+            default: break;
+        }
+    }
+    private async Awaitable NotifySpecialNodeAsync(SpatialNode node, float durationMultiplier)
+    {
+        try
+        {
+            await Awaitable.WaitForSecondsAsync(_moveDuration * durationMultiplier, destroyCancellationToken);
+
+            if (node.NodeState == ENodeState.Finish)
+            {
+                _isLastMove = true;
+                _history.Clear();
+            }
+
+            _onNotifySpecialNode?.Raised(node);
+        }
+        catch
+        {
+            Utils.Log("PlayerController - NotifySpecialNodeAsync CATCH");
+        }
+    }
     private Vector2Int GetDiscreteDirection(Vector2 input)
     {
         if (input.sqrMagnitude < 0.01f) return Vector2Int.zero;
@@ -194,6 +227,7 @@ public class PlayerController : PoolableComponent
         IsGoTo = false;
         IsGoFrom = false;
         _isRotate = false;
+        _isLastMove = false;
         if (_anim != null)
         {
             _anim.Rebind();
@@ -202,13 +236,15 @@ public class PlayerController : PoolableComponent
     }
     #endregion
 
+    #region PoolableComponenet
     public override void OnSpawn()
     {
-
+        _stateMC.ChangeState(_idleState);
     }
 
     public override void OnDespawn()
     {
         InitAtDespawn();
     }
+    #endregion
 }
