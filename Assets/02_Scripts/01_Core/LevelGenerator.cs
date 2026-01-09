@@ -39,6 +39,7 @@ public class LevelGenerator : MonoBehaviour
         Managers.Pool.DespawnAll();
 
         SpatialNode startNode = null;
+        SpatialNode finishNode = null;
 
         foreach (var nodeData in nodeGraph.Nodes)
         {
@@ -61,6 +62,7 @@ public class LevelGenerator : MonoBehaviour
                 if (node.NodeState == ENodeState.Finish)
                 {
                     Managers.Pool.Spawn<Piece_Goal>(_goalPoolData, node.WorldPosition);
+                    finishNode = node;
                 }
             }
             else
@@ -72,6 +74,8 @@ public class LevelGenerator : MonoBehaviour
         {
             PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldPosition);
             player.Init(_nodeMap, startNode);
+            Managers.Camera.SetPlayerTarget(player);
+            _ = Managers.Camera.StartStageIntro(startNode.WorldPosition, finishNode.WorldPosition, 4.0f);
         }
     }
 }

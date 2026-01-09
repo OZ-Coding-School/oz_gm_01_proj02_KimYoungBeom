@@ -12,6 +12,9 @@ public class PlayerController : PoolableComponent
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode;
     [SerializeField] private VoidEventCHSO _onStageClear;
+
+    [Header("컴포넌트 참조")]
+    [SerializeField] private Transform _eyePoint;
     #endregion
 
     #region 상태머신관련
@@ -35,6 +38,7 @@ public class PlayerController : PoolableComponent
     public Animator Anim => _anim;
     public float SadIdleCool => _sadIdleCool;
     public VoidEventCHSO OnStageClear => _onStageClear;
+    public Transform EyePoint => _eyePoint;
     #endregion
 
     #region private 멤버

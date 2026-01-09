@@ -19,3 +19,7 @@ public enum ENodeState
 {
     None, Start, Finish
 }
+public enum EViewMode
+{
+    Intro, Quarter, Top, FirstPerson, Lobby
+}

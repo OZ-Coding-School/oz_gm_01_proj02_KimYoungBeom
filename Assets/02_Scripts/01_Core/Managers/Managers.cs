@@ -9,13 +9,14 @@ public class Managers : MonoBehaviour
     [SerializeField] private GameObject _gameManagerPrefab;
     [SerializeField] private GameObject _stageManagerPrefab;
     [SerializeField] private GameObject _inputManagerPrefab;
-
+    [SerializeField] private GameObject _cameraManagerPrefab;
 
     public static DataManager Data { get; private set; }
     public static PoolManager Pool { get; private set; }
     public static GameManager Game { get; private set; }
     public static StageManager Stage { get; private set; }
     public static InputManager Input { get; private set; }
+    public static CameraManager Camera { get; private set; }
     private void Awake()
     {
         if (Instance == null)
@@ -32,6 +33,11 @@ public class Managers : MonoBehaviour
         {
             GameObject dataGo = Instantiate(dataManagerPrefab, transform);
             Data = dataGo.GetComponent<DataManager>();
+        }
+        if (_cameraManagerPrefab != null)
+        {
+            GameObject cameraGo = Instantiate(_cameraManagerPrefab, transform);
+            Camera = cameraGo.GetComponent<CameraManager>();
         }
         if (_inputManagerPrefab != null)
         {
