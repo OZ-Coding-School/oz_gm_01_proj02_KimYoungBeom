@@ -8,7 +8,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private List<NodeGraphSO> _stageRepository = new List<NodeGraphSO>();
 
     private LevelGenerator _generator;
-
+    private int _currentStageNum;
     public void RegisterGenerator(LevelGenerator generator)
     {
         _generator = generator;
@@ -22,7 +22,7 @@ public class StageManager : MonoBehaviour
     public void RequestGenerate(int index)
     {
         if (_generator == null) return;
-        if (index < 0 || index >= _stageRepository.Count) return;
+        if (index < 0) return;
         if (index >= _stageRepository.Count)
         {
             //모든 스테이지를 클리어 했을 때 (일단 로비로 돌아감)

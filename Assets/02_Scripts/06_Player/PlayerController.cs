@@ -11,6 +11,7 @@ public class PlayerController : PoolableComponent
 
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode;
+    [SerializeField] private VoidEventCHSO _onStageClear;
     #endregion
 
     #region 상태머신관련
@@ -33,6 +34,7 @@ public class PlayerController : PoolableComponent
     public bool IsGoFrom { get; set; } = false;
     public Animator Anim => _anim;
     public float SadIdleCool => _sadIdleCool;
+    public VoidEventCHSO OnStageClear => _onStageClear;
     #endregion
 
     #region private 멤버
@@ -42,6 +44,7 @@ public class PlayerController : PoolableComponent
     //런타임 변수
     private Dictionary<Vector3Int, SpatialNode> _nodeMap;
     private Stack<ICommand> _history = new Stack<ICommand>();
+    private readonly Dictionary<int, float> _clipLenghCacheDic = new Dictionary<int, float>();
 
     //상태관리 변수
     private Vector2Int _rotateDir = new Vector2Int();
@@ -53,6 +56,7 @@ public class PlayerController : PoolableComponent
     private void Awake()
     {
         _anim = GetComponent<Animator>();
+        InitClipLength(_anim.runtimeAnimatorController);
 
         _stateMC = new StateMachine();
         _idleState = new IdleState(this);
@@ -62,6 +66,7 @@ public class PlayerController : PoolableComponent
         _finishState = new FinishState(this);
 
         InitTransitions();
+
     }
     private void OnEnable()
     {
@@ -90,6 +95,13 @@ public class PlayerController : PoolableComponent
         _history.Clear();
     }
     public void SetCurrentNode(SpatialNode node) => CurrentNode = node;
+    #endregion
+
+    #region 외부 호출
+    public float GetClipLength(int hash)
+    {
+        return _clipLenghCacheDic.TryGetValue(hash, out float clipLength) ? clipLength : 0.0f;
+    }
     #endregion
 
     #region 상태 전환조건 모음
@@ -155,6 +167,17 @@ public class PlayerController : PoolableComponent
     #endregion
 
     #region Helper 함수
+    private void InitClipLength(RuntimeAnimatorController controller)
+    {
+        foreach (var clip in controller.animationClips)
+        {
+            int hash = Animator.StringToHash(clip.name);
+            if (!_clipLenghCacheDic.ContainsKey(hash))
+            {
+                _clipLenghCacheDic.Add(hash, clip.length);
+            }
+        }
+    }
     private void NotifySpecialNode(SpatialNode node)
     {
         switch (node.NodeState)
@@ -245,6 +268,10 @@ public class PlayerController : PoolableComponent
     public override void OnDespawn()
     {
         InitAtDespawn();
+    }
+    public override void ReturnPool()
+    {
+        Managers.Pool.Despawn(poolData, this);
     }
     #endregion
 }

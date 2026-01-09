@@ -3,9 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("이벤트 발송")]
     [SerializeField] private VoidEventCHSO _onGamePause;
     [SerializeField] private VoidEventCHSO _onGameResume;
     [SerializeField] private VoidEventCHSO _onSceneChanged;
+    [Header("이벤트 구독")]
+    [SerializeField] private VoidEventCHSO _onStageClear;
 
     private bool bIsPause = false;
     private bool bIsGameOver = false;
@@ -18,10 +21,12 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += HandleOnSceneLoad;
+        _onStageClear.onEvent += HandleStageClear;
     }
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= HandleOnSceneLoad;
+        _onStageClear.onEvent -= HandleStageClear;
     }
     public void HandleOnSceneLoad(Scene scene, LoadSceneMode mode)
     {
@@ -38,6 +43,8 @@ public class GameManager : MonoBehaviour
     }
     public void LoadLobbyScene()
     {
+        DG.Tweening.DOTween.KillAll();
+
         Managers.Pool.DespawnAll();
         CurrentStageIndex = -1;
         Time.timeScale = 1.0f;
@@ -70,6 +77,7 @@ public class GameManager : MonoBehaviour
         CurrentStageIndex++;
 
         //하나 커진 인덱스를 DataManager에 저장하여 완료한 스테이지 기록
+        Managers.Data.clearedStageNum = CurrentStageIndex;
 
         Managers.Stage.RequestGenerate(CurrentStageIndex);
     }

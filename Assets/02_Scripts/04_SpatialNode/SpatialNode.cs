@@ -66,4 +66,9 @@ public class SpatialNode : PoolableComponent, INode
             yield return null;
         }
     }
+
+    public override void ReturnPool()
+    {
+        Managers.Pool.Despawn(poolData, this);
+    }
 }

@@ -102,3 +102,4 @@ MonoBehaviour:
   _sadIdleCool: 3
   _rotateSpeed: 15
   _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}
+  _onStageClear: {fileID: 11400000, guid: 682f5d0cd6177174ea7c8a5881c8da83, type: 2}
