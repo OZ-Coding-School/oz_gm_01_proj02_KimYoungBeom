@@ -4,14 +4,14 @@ using UnityEngine;
 public class Managers : MonoBehaviour
 {
     public static Managers Instance { get; private set; }
-    //[SerializeField] private GameObject dataManagerPrefab;
+    [SerializeField] private GameObject dataManagerPrefab;
     [SerializeField] private GameObject _poolManagerPrefab;
     [SerializeField] private GameObject _gameManagerPrefab;
     [SerializeField] private GameObject _stageManagerPrefab;
     [SerializeField] private GameObject _inputManagerPrefab;
 
 
-    //public static DataManager Data { get; private set; }
+    public static DataManager Data { get; private set; }
     public static PoolManager Pool { get; private set; }
     public static GameManager Game { get; private set; }
     public static StageManager Stage { get; private set; }
@@ -28,12 +28,11 @@ public class Managers : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        //if (dataManagerPrefab != null)
-        //{
-        //    GameObject dataGo = Instantiate(dataManagerPrefab, transform);
-        //    Data = dataGo.GetComponent<DataManager>();
-        //}
-
+        if (dataManagerPrefab != null)
+        {
+            GameObject dataGo = Instantiate(dataManagerPrefab, transform);
+            Data = dataGo.GetComponent<DataManager>();
+        }
         if (_inputManagerPrefab != null)
         {
             GameObject inputGo = Instantiate(_inputManagerPrefab, transform);
@@ -54,11 +53,9 @@ public class Managers : MonoBehaviour
             GameObject stageGo = Instantiate(_stageManagerPrefab, transform);
             Stage = stageGo.GetComponent<StageManager>();
         }
-        //if (Data != null)
-        //{
-        //    Data.LoadGame();
-        //}
-
+        if (Data != null)
+        {
+            Data.LoadGame();
+        }
     }
-
 }
