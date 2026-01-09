@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour
         CurrentStageIndex = -1;
         Time.timeScale = 1.0f;
         bIsPause = false;
+
+        Managers.Camera.ChangeView(EViewMode.Lobby);
+
         SceneManager.LoadScene(Defines.SCENE_LOBBY);
     }
     public void TogglePause()

@@ -551,10 +551,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65dfb3cdb77bc2641b683170c8ea87dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Managers
+  dataManagerPrefab: {fileID: 0}
   _poolManagerPrefab: {fileID: 0}
   _gameManagerPrefab: {fileID: 0}
   _stageManagerPrefab: {fileID: 0}
   _inputManagerPrefab: {fileID: 0}
+  _cameraManagerPrefab: {fileID: 0}
 --- !u!1001 &278342379
 PrefabInstance:
   m_ObjectHideFlags: 0
