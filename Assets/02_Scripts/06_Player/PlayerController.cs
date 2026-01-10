@@ -93,6 +93,7 @@ public class PlayerController : PoolableComponent
     }
     public void Init(Dictionary<Vector3Int, SpatialNode> nodeMap, SpatialNode startNode)
     {
+        InitAtDespawn();
         _nodeMap = nodeMap;
         SetCurrentNode(startNode);
         transform.position = startNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
@@ -137,7 +138,7 @@ public class PlayerController : PoolableComponent
 
     public void OnUnDo()
     {
-        if (IsMoving || _history.Count == 0) return;
+        if (IsMoving || _history.Count == 0 || !Managers.Stage.UseTurn()) return;
 
         IsGoFrom = true;
         IsMoving = true;
@@ -156,7 +157,7 @@ public class PlayerController : PoolableComponent
             CurrentNode.GridCoordinate.y + direction.y
         );
 
-        if (_nodeMap.TryGetValue(targetKey, out SpatialNode targetNode))
+        if (_nodeMap.TryGetValue(targetKey, out SpatialNode targetNode) && Managers.Stage.UseTurn())
         {
             IsGoTo = true;
             IsMoving = true;
@@ -250,6 +251,7 @@ public class PlayerController : PoolableComponent
     }
     private void InitAtDespawn()
     {
+        DG.Tweening.DOTween.KillAll();
         IsMoving = false;
         IsGoTo = false;
         IsGoFrom = false;

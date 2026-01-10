@@ -2,7 +2,7 @@
 - Project name: Cubes
 - Unity version: Unity 6000.3.2f1
 - Active game object:
-  - Name: MainCamera
-  - Tag: MainCamera
-  - Layer: Default
+  - Name: StageUI
+  - Tag: Untagged
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

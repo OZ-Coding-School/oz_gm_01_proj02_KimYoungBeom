@@ -97,7 +97,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ReLoadScene",
+                    "name": "ReLoadStage",
                     "type": "Button",
                     "id": "1657cf66-19cf-457a-9daf-677f9fd950ea",
                     "expectedControlType": "",
@@ -519,7 +519,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "ReLoadScene",
+                    "action": "ReLoadStage",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

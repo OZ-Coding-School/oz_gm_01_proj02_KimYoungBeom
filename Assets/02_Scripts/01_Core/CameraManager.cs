@@ -64,24 +64,26 @@ public class CameraManager : MonoBehaviour
             bool isTarget = (kvp.Key == mode);
             vcam.Priority = isTarget ? 10 : 0;
         }
-        if (mode == EViewMode.Lobby)
-        {
-            _vCamsDic[EViewMode.Lobby].ForceCameraPosition(Vector3.zero, Quaternion.identity);
-            _brain.ActiveBlend = null;
-        }
+        //if (mode == EViewMode.Lobby)
+        //{
+        //    _vCamsDic[EViewMode.Lobby].ForceCameraPosition(Vector3.zero, Quaternion.identity);
+        //    _brain.ActiveBlend = null;
+        //}
     }
 
     public async Awaitable StartStageIntro(Vector3 startPos, Vector3 endPos, float duration)
     {
+        ChangeView(EViewMode.Lobby);
+        await Awaitable.NextFrameAsync(destroyCancellationToken);
         ChangeView(EViewMode.Intro);
         CancelIntro();
         _introCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
 
         CinemachineCamera introCam = _vCamsDic[EViewMode.Intro];
 
-        float scanDuration = duration * 0.7f;
-        float returnDuration = duration * 0.3f;
-        Vector3 offset = new Vector3(-5.0f, 6.0f, -5.0f);
+        float scanDuration = duration * 0.65f;
+        float returnDuration = duration * 0.36f;
+        Vector3 offset = new Vector3(-1.0f, 5.5f, -5.0f);
 
         float elapsed = 0f;
         try
@@ -102,16 +104,17 @@ public class CameraManager : MonoBehaviour
                 elapsed += Time.deltaTime;
                 await Awaitable.NextFrameAsync(_introCts.Token);
             }
-
+            Quaternion startRotation = introCam.transform.rotation;
+            Quaternion targetRotation = Quaternion.Euler(40.0f, 0.0f, 0.0f);
             elapsed = 0f;
             while (elapsed < returnDuration)
             {
                 float t = elapsed / returnDuration;
-                float curveT = t * t;
+                float curveT = Mathf.SmoothStep(0, 1, t);
 
                 Vector3 currentTarget = Vector3.Lerp(endPos, startPos, curveT);
                 introCam.transform.position = currentTarget + offset;
-                introCam.transform.LookAt(currentTarget);
+                introCam.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, curveT);
 
                 var lens = introCam.Lens;
                 lens.Dutch = Mathf.Lerp(10f, 0f, curveT);

@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
         CurrentStageIndex++;
 
         //하나 커진 인덱스를 DataManager에 저장하여 완료한 스테이지 기록
-        Managers.Data.clearedStageNum = CurrentStageIndex;
+        Managers.Data.SetBestClearedStageNum(CurrentStageIndex);
 
         Managers.Stage.RequestGenerate(CurrentStageIndex);
     }

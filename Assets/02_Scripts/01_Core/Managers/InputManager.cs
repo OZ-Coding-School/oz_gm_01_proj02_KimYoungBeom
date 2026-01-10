@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.Move.performed += OnMovePerformed;
         _inputActions.Player.Move.canceled += OnMoveCanceled;
         _inputActions.Player.UnDo.performed += OnUnDoPerformed;
-        _inputActions.Player.ReLoadScene.performed += OnReloadScene;
+        _inputActions.Player.ReLoadStage.performed += OnReloadStage;
         _inputActions.Player.Escape.performed += OnEscape;
     }
     private void OnDisable()
@@ -28,7 +29,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.Move.performed -= OnMovePerformed;
         _inputActions.Player.Move.canceled -= OnMoveCanceled;
         _inputActions.Player.UnDo.performed -= OnUnDoPerformed;
-        _inputActions.Player.ReLoadScene.performed -= OnReloadScene;
+        _inputActions.Player.ReLoadStage.performed -= OnReloadStage;
         _inputActions.Player.Escape.performed -= OnEscape;
 
         _inputActions.Disable();
@@ -37,15 +38,27 @@ public class InputManager : MonoBehaviour
     {
         _inputActions.Dispose();
     }
-    private void OnReloadScene(InputAction.CallbackContext context)
+    public void ExecuteReloadStage()
+    {
+        Managers.Stage.RequestGenerate(Managers.Game.CurrentStageIndex, false);
+    }
+    public void ExecuteEscape()
+    {
+        Managers.Game.LoadLobbyScene();
+    }
+    public void ExecuteUnDo()
+    {
+        onUnDoEvent?.Invoke();
+    }
+    private void OnReloadStage(InputAction.CallbackContext context)
     {
         //재시작 키 'R'
-        Managers.Game.LoadStageScene(Managers.Game.CurrentStageIndex);
+        ExecuteReloadStage();
     }
     private void OnEscape(InputAction.CallbackContext context)
     {
         //편의상 로비로
-        Managers.Game.LoadLobbyScene();
+        ExecuteEscape();
     }
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
@@ -57,6 +70,7 @@ public class InputManager : MonoBehaviour
     }
     private void OnUnDoPerformed(InputAction.CallbackContext context)
     {
-        onUnDoEvent?.Invoke();
+        ExecuteUnDo();
     }
+
 }

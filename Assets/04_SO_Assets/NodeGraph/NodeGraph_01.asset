@@ -82,3 +82,4 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 7
     nodeState: 0
+  _turnCount: 5

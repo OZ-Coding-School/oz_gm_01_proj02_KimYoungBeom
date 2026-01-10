@@ -135,3 +135,4 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 1
     nodeState: 0
+  _turnCount: 10
