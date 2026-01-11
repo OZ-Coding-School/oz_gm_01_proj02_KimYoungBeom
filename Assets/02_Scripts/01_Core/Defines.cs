@@ -2,14 +2,23 @@ using UnityEngine;
 
 public static class Defines
 {
+    //씬
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_STAGE = "Stage";
+
+    //플레이어
     public static readonly Vector3 PLAYER_Y_OFFSET = new Vector3(0.0f, 0.5f, 0.0f);
+
+    //애니메이션
     public static readonly int IDLE_HASH = Animator.StringToHash("Idle");
     public static readonly int SAD_IDLE_HASH = Animator.StringToHash("SadIdle");
     public static readonly int VICTORY_IDLE_HASH = Animator.StringToHash("VictoryIdle");
     public static readonly int JUMP_HASH = Animator.StringToHash("Jump");
     public static readonly int ANIM_SPEED_HASH = Animator.StringToHash("AnimSpeed");
+
+    //데이터매니저
+    public static readonly int CAM_SENS_MAX = 5;
+    public static readonly int CAM_SENS_MIN = 1;
 }
 public enum ENodeShape
 {

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -6,10 +6,19 @@ public class DataManager : MonoBehaviour
 {
     private string SavePath => Path.Combine(Application.persistentDataPath, "savegame.json");
 
+
+    public event Action onCamSensitivityChange;
+
     public int ClearedStageNum { get; private set; } = 0;
+    public float CamSensitivity { get; private set; } = 3.0f; //1~5 »çÀÌ Defines -> CAM_SEN
+
     #region LifeCycle
     private void Awake()
     {
+    }
+    private void Start()
+    {
+        onCamSensitivityChange?.Invoke();
     }
     private void OnEnable()
     {
@@ -26,6 +35,11 @@ public class DataManager : MonoBehaviour
         {
             ClearedStageNum = clearedStageNum;
         }
+    }
+    public void SetSensitivity(float value)
+    {
+        CamSensitivity = Mathf.Clamp(value, Defines.CAM_SENS_MIN, Defines.CAM_SENS_MAX);
+        onCamSensitivityChange?.Invoke();
     }
     #endregion
 

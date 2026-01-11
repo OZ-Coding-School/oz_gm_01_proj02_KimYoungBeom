@@ -39,6 +39,7 @@ public class StageManager : MonoBehaviour
         var nodeGraph = _stageRepository[index];
         CurrentTurnCount = nodeGraph.TurnCount;
         _generator.GenerateLevel(nodeGraph, doIntro);
+        onTurnCountChange?.Invoke();
     }
     public bool UseTurn()
     {

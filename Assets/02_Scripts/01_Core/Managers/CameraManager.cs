@@ -10,14 +10,43 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private CinemachineCamera[] _vCams;
     [SerializeField] private CinemachineBrain _brain;
 
+    [Header("감도 설정")]
+    [SerializeField] private float _sensitivityMultiplier = 0.1f;
+    [SerializeField] private float _maxSmoothTime = 0.2f;
+    [SerializeField] private float _minSmoothTime = 0.03f;
+
     private readonly Dictionary<EViewMode, CinemachineCamera> _vCamsDic = new();
+    private EViewMode _currentViewMode;
     private CancellationTokenSource _introCts;
+
+    //감도설정
+    private CinemachinePanTilt _panTilt;
+    private float _currentPan, _currentTilt;
+    private float _panVel, _tiltVel;
+    private float _targetPan, _targetTilt;
+    private float _currentSensitivity;
+
+    #region Life Time
     private void Awake()
     {
         InitDictionary();
         ChangeView(EViewMode.Lobby);
+        _panTilt = _vCamsDic[EViewMode.FirstPerson].GetComponent<CinemachinePanTilt>();
     }
-
+    private void Update()
+    {
+        ApplyLinearSmoothing();
+    }
+    private void OnEnable()
+    {
+        Managers.Input.onLookEvent += OnLook;
+        Managers.Data.onCamSensitivityChange += HandleSensitivityChange;
+    }
+    private void OnDisable()
+    {
+        Managers.Input.onLookEvent -= OnLook;
+        Managers.Data.onCamSensitivityChange -= HandleSensitivityChange;
+    }
     private void InitDictionary()
     {
         if (_vCams == null || _vCams.Length < 5) return;
@@ -29,7 +58,41 @@ public class CameraManager : MonoBehaviour
         _vCamsDic.Add(EViewMode.FirstPerson, _vCams[3]);
         _vCamsDic.Add(EViewMode.Lobby, _vCams[4]);
     }
+    #endregion
 
+    #region Event Handle
+    private void OnLook(Vector2 delta)
+    {
+        if (_currentViewMode != EViewMode.FirstPerson) return;
+
+        _targetPan += delta.x * _currentSensitivity;
+        _targetTilt -= delta.y * _currentSensitivity;
+    }
+    private void ApplyLinearSmoothing()
+    {
+        if (_currentViewMode != EViewMode.FirstPerson) return;
+
+        float t = Mathf.InverseLerp(Defines.CAM_SENS_MIN, Defines.CAM_SENS_MAX, _currentSensitivity);
+
+        float currentSmoothTime = Mathf.Lerp(_maxSmoothTime, _minSmoothTime, t);
+
+        _currentPan = Mathf.SmoothDampAngle(_currentPan, _targetPan, ref _panVel, currentSmoothTime);
+        _currentTilt = Mathf.SmoothDamp(_currentTilt, _targetTilt, ref _tiltVel, currentSmoothTime);
+
+        if (_panTilt != null)
+        {
+            _panTilt.TiltAxis.Value = _currentTilt;
+            _panTilt.PanAxis.Value = _currentPan;
+        }
+    }
+    private void HandleSensitivityChange()
+    {
+        _currentSensitivity = Managers.Data.CamSensitivity * _sensitivityMultiplier;
+    }
+    #endregion
+
+    #region 외부호출 함수
+    public float GetPanValue() => _currentPan;
     public void SetPlayerTarget(PlayerController player)
     {
         Transform eyePoint = player.EyePoint;
@@ -64,13 +127,12 @@ public class CameraManager : MonoBehaviour
             bool isTarget = (kvp.Key == mode);
             vcam.Priority = isTarget ? 10 : 0;
         }
-        //if (mode == EViewMode.Lobby)
-        //{
-        //    _vCamsDic[EViewMode.Lobby].ForceCameraPosition(Vector3.zero, Quaternion.identity);
-        //    _brain.ActiveBlend = null;
-        //}
-    }
 
+        _currentViewMode = mode;
+    }
+    #endregion
+
+    #region 인트로 연출
     public async Awaitable StartStageIntro(Vector3 startPos, Vector3 endPos, float duration)
     {
         ChangeView(EViewMode.Lobby);
@@ -143,4 +205,5 @@ public class CameraManager : MonoBehaviour
             _introCts = null;
         }
     }
+    #endregion
 }

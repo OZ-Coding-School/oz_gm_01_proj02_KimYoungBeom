@@ -54,6 +54,7 @@ public class PlayerController : PoolableComponent
     private Vector2Int _rotateDir = new Vector2Int();
     private bool _isRotate = false;
     private bool _isLastMove = false;
+    private EViewMode _currentView = EViewMode.Quarter;
     #endregion
 
     #region LifeCycle
@@ -76,11 +77,17 @@ public class PlayerController : PoolableComponent
     {
         Managers.Input.onMoveEvent += OnMove;
         Managers.Input.onUnDoEvent += OnUnDo;
+        Managers.Input.onFirstViewEvent += OnChangeFirstPersonView;
+        Managers.Input.onTopViewEvent += OnChangeTopView;
+        Managers.Input.onLookEvent += OnLook;
     }
     private void OnDisable()
     {
         Managers.Input.onMoveEvent -= OnMove;
         Managers.Input.onUnDoEvent -= OnUnDo;
+        Managers.Input.onFirstViewEvent -= OnChangeFirstPersonView;
+        Managers.Input.onTopViewEvent -= OnChangeTopView;
+        Managers.Input.onLookEvent -= OnLook;
     }
     private void Update()
     {
@@ -89,7 +96,12 @@ public class PlayerController : PoolableComponent
     private void FixedUpdate()
     {
         _stateMC?.FixedUpdate();
-        if (_isRotate) RotateToInputDir();
+        if (_isRotate && _currentView != EViewMode.FirstPerson) RotateToInputDir();
+    }
+    private void LateUpdate()
+    {
+        if (_currentView != EViewMode.FirstPerson) return;
+        transform.rotation = Quaternion.Euler(0f, Managers.Camera.GetPanValue(), 0f);
     }
     public void Init(Dictionary<Vector3Int, SpatialNode> nodeMap, SpatialNode startNode)
     {
@@ -168,6 +180,25 @@ public class PlayerController : PoolableComponent
 
             NotifySpecialNode(targetNode);
         }
+    }
+    #endregion
+
+    #region Input Action
+    private void OnChangeTopView()
+    {
+        _currentView = EViewMode.Top;
+        Managers.Camera.ChangeView(EViewMode.Top);
+    }
+    private void OnChangeFirstPersonView()
+    {
+        _currentView = EViewMode.FirstPerson;
+        Managers.Camera.ChangeView(EViewMode.FirstPerson);
+    }
+    private void OnLook(Vector2 look)
+    {
+        if (_currentView != EViewMode.FirstPerson) return;
+        float vel = look.x * 0.2f;
+        transform.Rotate(Vector3.up * vel);
     }
     #endregion
 
@@ -268,6 +299,7 @@ public class PlayerController : PoolableComponent
     #region PoolableComponenet
     public override void OnSpawn()
     {
+        _currentView = EViewMode.Quarter;
         _stateMC.ChangeState(_idleState);
     }
 

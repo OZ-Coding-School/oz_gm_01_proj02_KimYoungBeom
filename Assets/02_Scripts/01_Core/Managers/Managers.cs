@@ -34,15 +34,15 @@ public class Managers : MonoBehaviour
             GameObject dataGo = Instantiate(dataManagerPrefab, transform);
             Data = dataGo.GetComponent<DataManager>();
         }
-        if (_cameraManagerPrefab != null)
-        {
-            GameObject cameraGo = Instantiate(_cameraManagerPrefab, transform);
-            Camera = cameraGo.GetComponent<CameraManager>();
-        }
         if (_inputManagerPrefab != null)
         {
             GameObject inputGo = Instantiate(_inputManagerPrefab, transform);
             Input = inputGo.GetComponent<InputManager>();
+        }
+        if (_cameraManagerPrefab != null)
+        {
+            GameObject cameraGo = Instantiate(_cameraManagerPrefab, transform);
+            Camera = cameraGo.GetComponent<CameraManager>();
         }
         if (_poolManagerPrefab != null)
         {

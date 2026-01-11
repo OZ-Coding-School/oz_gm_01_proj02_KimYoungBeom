@@ -7,6 +7,9 @@ public class InputManager : MonoBehaviour
 {
     public event Action<Vector2> onMoveEvent;
     public event Action onUnDoEvent;
+    public event Action onTopViewEvent;
+    public event Action onFirstViewEvent;
+    public event Action<Vector2> onLookEvent;
 
     private InputSystem_Actions _inputActions;
 
@@ -23,6 +26,9 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.UnDo.performed += OnUnDoPerformed;
         _inputActions.Player.ReLoadStage.performed += OnReloadStage;
         _inputActions.Player.Escape.performed += OnEscape;
+        _inputActions.Player.TopView.performed += OnTopView;
+        _inputActions.Player.FirstView.performed += OnFirstView;
+        _inputActions.Player.Look.performed += OnLook;
     }
     private void OnDisable()
     {
@@ -31,6 +37,9 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.UnDo.performed -= OnUnDoPerformed;
         _inputActions.Player.ReLoadStage.performed -= OnReloadStage;
         _inputActions.Player.Escape.performed -= OnEscape;
+        _inputActions.Player.TopView.performed -= OnTopView;
+        _inputActions.Player.FirstView.performed -= OnFirstView;
+        _inputActions.Player.Look.performed -= OnLook;
 
         _inputActions.Disable();
     }
@@ -49,6 +58,18 @@ public class InputManager : MonoBehaviour
     public void ExecuteUnDo()
     {
         onUnDoEvent?.Invoke();
+    }
+    public void ExecuteTopView()
+    {
+        onTopViewEvent?.Invoke();
+    }
+    public void ExecuteFirstView()
+    {
+        onFirstViewEvent?.Invoke();
+    }
+    private void OnLook(InputAction.CallbackContext context)
+    {
+        onLookEvent?.Invoke(context.ReadValue<Vector2>());
     }
     private void OnReloadStage(InputAction.CallbackContext context)
     {
@@ -70,7 +91,18 @@ public class InputManager : MonoBehaviour
     }
     private void OnUnDoPerformed(InputAction.CallbackContext context)
     {
+        //Z Ű
         ExecuteUnDo();
+    }
+    private void OnTopView(InputAction.CallbackContext context)
+    {
+        //T Ű
+        ExecuteTopView();
+    }
+    private void OnFirstView(InputAction.CallbackContext context)
+    {
+        //F Ű
+        ExecuteFirstView();
     }
 
 }
