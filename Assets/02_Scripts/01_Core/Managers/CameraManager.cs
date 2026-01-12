@@ -67,7 +67,7 @@ public class CameraManager : MonoBehaviour
     #region Event Handle
     private void OnBlendFinished(ICinemachineCamera from, ICinemachineCamera to)
     {
-        IsBlending = false;
+        if (!(_currentViewMode == EViewMode.Intro)) IsBlending = false;
         if (_currentViewMode == EViewMode.Top)
         {
             _vCams[5].gameObject.SetActive(true);
@@ -165,9 +165,11 @@ public class CameraManager : MonoBehaviour
         await Awaitable.NextFrameAsync(destroyCancellationToken);
         ChangeView(EViewMode.Intro);
         CancelIntro();
-        _introCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
 
+        _introCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
         CinemachineCamera introCam = _vCamsDic[EViewMode.Intro];
+
+        IsBlending = true;
 
         float scanDuration = duration * 0.65f;
         float returnDuration = duration * 0.36f;
@@ -211,9 +213,7 @@ public class CameraManager : MonoBehaviour
                 elapsed += Time.deltaTime;
                 await Awaitable.NextFrameAsync(_introCts.Token);
             }
-
             ChangeView(EViewMode.Quarter);
-            IsBlending = false;
         }
         catch (OperationCanceledException)
         {

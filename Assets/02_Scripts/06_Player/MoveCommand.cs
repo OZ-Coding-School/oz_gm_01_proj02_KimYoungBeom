@@ -26,7 +26,6 @@ public class MoveCommand : ICommand
             .OnComplete(() =>
             {
                 _player.SetCurrentNode(_toNode);
-                _player.SetFromNode(_fromNode);
                 _player.IsGoTo = false;
                 _player.IsMoving = false;
                 _player.OnPlayerMoving.Raised(_player.IsMoving);

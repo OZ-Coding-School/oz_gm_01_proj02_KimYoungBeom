@@ -33,8 +33,6 @@ public class PlayerController : PoolableComponent
     private Animator _anim;
 
     //런타임 변수
-    private Dictionary<Vector3Int, SpatialNode> _nodeMap3D;
-    private Dictionary<Vector2Int, SpatialNode> _nodeMap2D = new Dictionary<Vector2Int, SpatialNode>();
     private Stack<ICommand> _history = new Stack<ICommand>();
     private readonly Dictionary<int, float> _clipLenghCacheDic = new Dictionary<int, float>();
 
@@ -51,7 +49,6 @@ public class PlayerController : PoolableComponent
 
     #region 프로퍼티
     public SpatialNode CurrentNode { get; private set; }
-    public SpatialNode FromNode { get; private set; }
     public bool IsMoving { get; set; } = false;
     public bool IsGoTo { get; set; } = false;
     public bool IsGoFrom { get; set; } = false;
@@ -107,30 +104,17 @@ public class PlayerController : PoolableComponent
         if (_currentView != EViewMode.FirstPerson) return;
         transform.rotation = Quaternion.Euler(0f, Managers.Camera.GetPanValue(), 0f);
     }
-    public void Init(Dictionary<Vector3Int, SpatialNode> nodeMap, SpatialNode startNode)
+    public void Init(SpatialNode startNode)
     {
         InitAtDespawn();
-        _nodeMap3D = nodeMap;
         SetCurrentNode(startNode);
         transform.position = startNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
         _history.Clear();
-
-        _nodeMap2D.Clear();
-        foreach (var node in nodeMap)
-        {
-            var key = node.Value.GridCoordinate;
-            var value = node.Value;
-            if (!_nodeMap2D.ContainsKey(key))
-            {
-                _nodeMap2D[key] = value;
-            }
-        }
     }
     #endregion
 
     #region 외부 호출
     public void SetCurrentNode(SpatialNode node) => CurrentNode = node;
-    public void SetFromNode(SpatialNode node) => FromNode = node;
     public float GetClipLength(int hash)
     {
         return _clipLenghCacheDic.TryGetValue(hash, out float clipLength) ? clipLength : 0.0f;
@@ -203,11 +187,7 @@ public class PlayerController : PoolableComponent
         if (_currentView == EViewMode.Top)
         {
             Vector2Int targetKey = CurrentNode.GridCoordinate + direction;
-
-            if (_nodeMap2D.TryGetValue(targetKey, out SpatialNode targetNode) && Managers.Stage.UseTurn())
-            {
-                ExecuteCommand(targetNode);
-            }
+            ExecuteCommandByKey(targetKey);
         }
         else
         {
@@ -216,24 +196,34 @@ public class PlayerController : PoolableComponent
                 Mathf.RoundToInt(CurrentNode.WorldPosition.y),
                 CurrentNode.GridCoordinate.y + direction.y
             );
-
-            if (_nodeMap3D.TryGetValue(targetKey, out SpatialNode targetNode) && Managers.Stage.UseTurn())
-            {
-                ExecuteCommand(targetNode);
-            }
+            ExecuteCommandByKey(targetKey);
         }
+    }
+    private void ExecuteCommandByKey(Vector3Int targetKey)
+    {
+        SpatialNode targetNode = Managers.Stage.GetNodeAt(targetKey);
+        ExecuteCommand(targetNode);
+    }
+    private void ExecuteCommandByKey(Vector2Int targetKey)
+    {
+        SpatialNode targetNode = Managers.Stage.GetNodeAt(targetKey);
+        ExecuteCommand(targetNode);
     }
     private void ExecuteCommand(SpatialNode targetNode)
     {
-        IsGoTo = true;
-        IsMoving = true;
-        _onPlayerMoving.Raised(IsMoving);
-        MoveCommand moveCmd = new MoveCommand(this, CurrentNode, targetNode, _moveDuration);
+        if (targetNode == null) return;
+        if (Managers.Stage.UseTurn())
+        {
+            IsGoTo = true;
+            IsMoving = true;
+            _onPlayerMoving.Raised(IsMoving);
+            MoveCommand moveCmd = new MoveCommand(this, CurrentNode, targetNode, _moveDuration);
 
-        moveCmd.Execute();
-        _history.Push(moveCmd);
+            moveCmd.Execute();
+            _history.Push(moveCmd);
 
-        NotifySpecialNode(targetNode);
+            NotifySpecialNode(targetNode);
+        }
     }
     #endregion
 
