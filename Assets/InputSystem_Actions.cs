@@ -217,6 +217,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QuarterView"",
+                    ""type"": ""Button"",
+                    ""id"": ""a24d8340-9432-4f36-822b-837b8aa8b602"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -657,6 +666,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""FirstView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8a0cf392-a0a0-454d-b1d7-27972a27cfbc"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""QuarterView"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1258,6 +1278,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Escape = m_Player.FindAction("Escape", throwIfNotFound: true);
         m_Player_TopView = m_Player.FindAction("TopView", throwIfNotFound: true);
         m_Player_FirstView = m_Player.FindAction("FirstView", throwIfNotFound: true);
+        m_Player_QuarterView = m_Player.FindAction("QuarterView", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1365,6 +1386,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Escape;
     private readonly InputAction m_Player_TopView;
     private readonly InputAction m_Player_FirstView;
+    private readonly InputAction m_Player_QuarterView;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1433,6 +1455,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @FirstView => m_Wrapper.m_Player_FirstView;
         /// <summary>
+        /// Provides access to the underlying input action "Player/QuarterView".
+        /// </summary>
+        public InputAction @QuarterView => m_Wrapper.m_Player_QuarterView;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1500,6 +1526,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @FirstView.started += instance.OnFirstView;
             @FirstView.performed += instance.OnFirstView;
             @FirstView.canceled += instance.OnFirstView;
+            @QuarterView.started += instance.OnQuarterView;
+            @QuarterView.performed += instance.OnQuarterView;
+            @QuarterView.canceled += instance.OnQuarterView;
         }
 
         /// <summary>
@@ -1553,6 +1582,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @FirstView.started -= instance.OnFirstView;
             @FirstView.performed -= instance.OnFirstView;
             @FirstView.canceled -= instance.OnFirstView;
+            @QuarterView.started -= instance.OnQuarterView;
+            @QuarterView.performed -= instance.OnQuarterView;
+            @QuarterView.canceled -= instance.OnQuarterView;
         }
 
         /// <summary>
@@ -1951,6 +1983,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFirstView(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "QuarterView" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuarterView(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

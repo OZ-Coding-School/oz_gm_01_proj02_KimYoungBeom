@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    // 0:Intro, 1:Quarter, 2:Top, 3:FirstPerson ,4:Lobby
+    // 0:Intro, 1:Quarter, 2:Top, 3:FirstPerson ,4:Lobby, 5:TopOrtho
     [SerializeField] private CinemachineCamera[] _vCams;
     [SerializeField] private CinemachineBrain _brain;
 
@@ -26,6 +26,8 @@ public class CameraManager : MonoBehaviour
     private float _targetPan, _targetTilt;
     private float _currentSensitivity;
 
+    public bool IsBlending { get; private set; } = false;
+    public Action<EViewMode> onViewChanged;
     #region Life Time
     private void Awake()
     {
@@ -41,11 +43,13 @@ public class CameraManager : MonoBehaviour
     {
         Managers.Input.onLookEvent += OnLook;
         Managers.Data.onCamSensitivityChange += HandleSensitivityChange;
+        CinemachineCore.BlendFinishedEvent.AddListener(OnBlendFinished);
     }
     private void OnDisable()
     {
         Managers.Input.onLookEvent -= OnLook;
         Managers.Data.onCamSensitivityChange -= HandleSensitivityChange;
+        CinemachineCore.BlendFinishedEvent.RemoveAllListeners();
     }
     private void InitDictionary()
     {
@@ -61,6 +65,17 @@ public class CameraManager : MonoBehaviour
     #endregion
 
     #region Event Handle
+    private void OnBlendFinished(ICinemachineCamera from, ICinemachineCamera to)
+    {
+        IsBlending = false;
+        if (_currentViewMode == EViewMode.Top)
+        {
+            _vCams[5].gameObject.SetActive(true);
+            _vCams[5].Priority = 10;
+            _vCamsDic[EViewMode.Top].Priority = 0;
+        }
+        onViewChanged?.Invoke(_currentViewMode);
+    }
     private void OnLook(Vector2 delta)
     {
         if (_currentViewMode != EViewMode.FirstPerson) return;
@@ -111,15 +126,26 @@ public class CameraManager : MonoBehaviour
             else
             {
                 vcam.Follow = player.transform;
-                vcam.LookAt = player.transform;
+                if (mode != EViewMode.Quarter && mode != EViewMode.Top)
+                {
+                    vcam.LookAt = player.transform;
+                }
             }
         }
+        _vCams[5].Follow = player.transform;
     }
 
     public void ChangeView(EViewMode mode)
     {
         if (!_vCamsDic.ContainsKey(mode)) return;
         if (mode != EViewMode.Intro) CancelIntro();
+        if (_currentViewMode == EViewMode.Top)
+        {
+            _vCamsDic[EViewMode.Top].Priority = 10;
+            _vCamsDic[EViewMode.Top].gameObject.SetActive(true);
+            _vCams[5].gameObject.SetActive(false);
+        }
+        if (_currentViewMode != mode) IsBlending = true;
 
         foreach (var kvp in _vCamsDic)
         {
@@ -145,7 +171,7 @@ public class CameraManager : MonoBehaviour
 
         float scanDuration = duration * 0.65f;
         float returnDuration = duration * 0.36f;
-        Vector3 offset = new Vector3(-1.0f, 5.5f, -5.0f);
+        Vector3 offset = new Vector3(0.0f, 5.5f, -5.0f);
 
         float elapsed = 0f;
         try
@@ -187,12 +213,14 @@ public class CameraManager : MonoBehaviour
             }
 
             ChangeView(EViewMode.Quarter);
+            IsBlending = false;
         }
         catch (OperationCanceledException)
         {
             var lens = introCam.Lens;
             lens.Dutch = 0;
             introCam.Lens = lens;
+            IsBlending = false;
             Utils.Log("인트로 연출 중단 및 초기화");
         }
     }
@@ -204,6 +232,7 @@ public class CameraManager : MonoBehaviour
             _introCts.Dispose();
             _introCts = null;
         }
+        IsBlending = false;
     }
     #endregion
 }

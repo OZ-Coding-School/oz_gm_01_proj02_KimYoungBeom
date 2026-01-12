@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class InputManager : MonoBehaviour
 {
     public event Action<Vector2> onMoveEvent;
+    public event Action onReloadStageEvent;
     public event Action onUnDoEvent;
     public event Action onTopViewEvent;
     public event Action onFirstViewEvent;
+    public event Action onQuarterViewEvent;
     public event Action<Vector2> onLookEvent;
 
     private InputSystem_Actions _inputActions;
@@ -29,6 +31,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.TopView.performed += OnTopView;
         _inputActions.Player.FirstView.performed += OnFirstView;
         _inputActions.Player.Look.performed += OnLook;
+        _inputActions.Player.QuarterView.performed += OnQuarterView;
     }
     private void OnDisable()
     {
@@ -40,6 +43,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.TopView.performed -= OnTopView;
         _inputActions.Player.FirstView.performed -= OnFirstView;
         _inputActions.Player.Look.performed -= OnLook;
+        _inputActions.Player.QuarterView.performed -= OnQuarterView;
 
         _inputActions.Disable();
     }
@@ -50,6 +54,7 @@ public class InputManager : MonoBehaviour
     public void ExecuteReloadStage()
     {
         Managers.Stage.RequestGenerate(Managers.Game.CurrentStageIndex, false);
+        onReloadStageEvent?.Invoke();
     }
     public void ExecuteEscape()
     {
@@ -67,6 +72,15 @@ public class InputManager : MonoBehaviour
     {
         onFirstViewEvent?.Invoke();
     }
+    public void ExecuteQuarterView()
+    {
+        onQuarterViewEvent?.Invoke();
+    }
+    private void OnQuarterView(InputAction.CallbackContext context)
+    {
+        // Q 
+        ExecuteQuarterView();
+    }
     private void OnLook(InputAction.CallbackContext context)
     {
         onLookEvent?.Invoke(context.ReadValue<Vector2>());
@@ -78,7 +92,7 @@ public class InputManager : MonoBehaviour
     }
     private void OnEscape(InputAction.CallbackContext context)
     {
-        //편의상 로비로
+        //esc 편의상 로비로
         ExecuteEscape();
     }
     private void OnMovePerformed(InputAction.CallbackContext context)

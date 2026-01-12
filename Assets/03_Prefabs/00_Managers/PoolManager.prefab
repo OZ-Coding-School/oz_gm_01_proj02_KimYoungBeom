@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoolManager
   _prewarmList:
+  - {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
+  - {fileID: 11400000, guid: e0e5c5d1f5d41634ab5cd4d2c32cb61b, type: 2}
+  - {fileID: 11400000, guid: de021394f8f042448b1fae1bce35e88a, type: 2}
   - {fileID: 11400000, guid: 5f53141aff8e4064d93fa3a9e3736c39, type: 2}
   - {fileID: 11400000, guid: 273c14d55b9380447b10891486a57d64, type: 2}
   - {fileID: 11400000, guid: fc66ddc571da249498a14a5013b390d2, type: 2}
@@ -56,6 +59,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bb8c6df9e3762954396337e378102c9e, type: 2}
   - {fileID: 11400000, guid: 612d1ab4494e6184a841f09bfccd251d, type: 2}
   - {fileID: 11400000, guid: 69c50220e14890f4d885ca9c2f499899, type: 2}
-  - {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
-  - {fileID: 11400000, guid: e0e5c5d1f5d41634ab5cd4d2c32cb61b, type: 2}
-  - {fileID: 11400000, guid: de021394f8f042448b1fae1bce35e88a, type: 2}

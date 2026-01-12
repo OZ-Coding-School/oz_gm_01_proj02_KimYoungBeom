@@ -87,8 +87,14 @@ public class LevelGenerator : MonoBehaviour
             }
             else
             {
-                Managers.Camera.ChangeView(EViewMode.Quarter);
+                _ = ChangeViewAtReloadStage();
             }
         }
+    }
+    private async Awaitable ChangeViewAtReloadStage()
+    {
+        Managers.Camera.ChangeView(EViewMode.Lobby);
+        await Awaitable.NextFrameAsync(destroyCancellationToken);
+        Managers.Camera.ChangeView(EViewMode.Quarter);
     }
 }

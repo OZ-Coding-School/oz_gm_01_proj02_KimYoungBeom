@@ -1862,7 +1862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 460256927377813802, guid: 7ed3704b06ddb894da3b87e32851ac64, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 460256927377813802, guid: 7ed3704b06ddb894da3b87e32851ac64, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2078,6 +2078,8 @@ MonoBehaviour:
   _undoBtn: {fileID: 2037395350}
   _topViewBtn: {fileID: 1862371167}
   _firstViewBtn: {fileID: 441337937}
+  _topText: {fileID: 0}
+  _onPlayerMoving: {fileID: 0}
 --- !u!1001 &990369029
 PrefabInstance:
   m_ObjectHideFlags: 0

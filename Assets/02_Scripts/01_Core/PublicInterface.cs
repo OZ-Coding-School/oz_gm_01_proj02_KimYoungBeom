@@ -28,5 +28,6 @@ public interface ICommand
 {
     void Execute();
     void UnDo();
+    bool CheckUnDo();
     public Vector2Int MoveDir { get; }
 }
