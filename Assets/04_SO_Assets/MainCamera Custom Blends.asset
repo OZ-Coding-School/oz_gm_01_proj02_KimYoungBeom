@@ -28,7 +28,7 @@ MonoBehaviour:
     To: vCam_Quarter
     Blend:
       Style: 1
-      Time: 0.5
+      Time: 0.1
       CustomCurve:
         serializedVersion: 2
         m_Curve: []

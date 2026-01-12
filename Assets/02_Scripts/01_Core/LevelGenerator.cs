@@ -8,7 +8,6 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private PoolableObjSO _goalPoolData;
 
     private Dictionary<ENodeShape, PoolableObjSO> _shapeMap;
-    private Dictionary<Vector3Int, SpatialNode> _nodeMap = new Dictionary<Vector3Int, SpatialNode>();
 
     private void Awake()
     {
@@ -40,7 +39,6 @@ public class LevelGenerator : MonoBehaviour
     {
         if (nodeGraph == null) return;
 
-        _nodeMap.Clear();
         Managers.Pool.DespawnAll();
 
         SpatialNode startNode = null;
@@ -53,12 +51,7 @@ public class LevelGenerator : MonoBehaviour
                 SpatialNode node = Managers.Pool.Spawn<SpatialNode>(targetPool, nodeData.worldPos);
                 node.InjectData(nodeData);
 
-                Vector3Int nodeKey = new Vector3Int(
-                    node.GridCoordinate.x,
-                    Mathf.RoundToInt(nodeData.worldPos.y),
-                    node.GridCoordinate.y
-                    );
-                _nodeMap[nodeKey] = node;
+                Managers.Stage.SetNodeMap(node);
 
                 if (node.NodeState == ENodeState.Start)
                 {
@@ -78,7 +71,7 @@ public class LevelGenerator : MonoBehaviour
         if (startNode != null && finishNode != null)
         {
             PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldPosition);
-            player.Init(_nodeMap, startNode);
+            player.Init(startNode);
             Managers.Camera.SetPlayerTarget(player);
             if (doIntro)
             {
