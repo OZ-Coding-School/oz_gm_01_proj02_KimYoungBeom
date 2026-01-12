@@ -97,7 +97,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ReLoadScene",
+                    "name": "ReLoadStage",
                     "type": "Button",
                     "id": "1657cf66-19cf-457a-9daf-677f9fd950ea",
                     "expectedControlType": "",
@@ -109,6 +109,33 @@
                     "name": "Escape",
                     "type": "Button",
                     "id": "df81ed9a-f8bd-4fa0-a193-8dbe85568f75",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TopView",
+                    "type": "Button",
+                    "id": "bec2a8cb-4394-48ed-9a55-a996314da996",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "FirstView",
+                    "type": "Button",
+                    "id": "bd502ed4-ca6a-4392-8213-8a277b2a2886",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuarterView",
+                    "type": "Button",
+                    "id": "a24d8340-9432-4f36-822b-837b8aa8b602",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -519,7 +546,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "ReLoadScene",
+                    "action": "ReLoadStage",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -531,6 +558,39 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f0d0fa2-4d76-494a-867c-8e84e7ac27da",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "TopView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5f402e3d-44a7-4475-a4d5-98c44373c67d",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "FirstView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8a0cf392-a0a0-454d-b1d7-27972a27cfbc",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "QuarterView",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

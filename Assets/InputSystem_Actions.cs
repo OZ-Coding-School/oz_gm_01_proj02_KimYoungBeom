@@ -183,7 +183,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ReLoadScene"",
+                    ""name"": ""ReLoadStage"",
                     ""type"": ""Button"",
                     ""id"": ""1657cf66-19cf-457a-9daf-677f9fd950ea"",
                     ""expectedControlType"": """",
@@ -195,6 +195,33 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""name"": ""Escape"",
                     ""type"": ""Button"",
                     ""id"": ""df81ed9a-f8bd-4fa0-a193-8dbe85568f75"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TopView"",
+                    ""type"": ""Button"",
+                    ""id"": ""bec2a8cb-4394-48ed-9a55-a996314da996"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FirstView"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd502ed4-ca6a-4392-8213-8a277b2a2886"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QuarterView"",
+                    ""type"": ""Button"",
+                    ""id"": ""a24d8340-9432-4f36-822b-837b8aa8b602"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -605,7 +632,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""ReLoadScene"",
+                    ""action"": ""ReLoadStage"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -617,6 +644,39 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6f0d0fa2-4d76-494a-867c-8e84e7ac27da"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""TopView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5f402e3d-44a7-4475-a4d5-98c44373c67d"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""FirstView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8a0cf392-a0a0-454d-b1d7-27972a27cfbc"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""QuarterView"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1214,8 +1274,11 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_UnDo = m_Player.FindAction("UnDo", throwIfNotFound: true);
-        m_Player_ReLoadScene = m_Player.FindAction("ReLoadScene", throwIfNotFound: true);
+        m_Player_ReLoadStage = m_Player.FindAction("ReLoadStage", throwIfNotFound: true);
         m_Player_Escape = m_Player.FindAction("Escape", throwIfNotFound: true);
+        m_Player_TopView = m_Player.FindAction("TopView", throwIfNotFound: true);
+        m_Player_FirstView = m_Player.FindAction("FirstView", throwIfNotFound: true);
+        m_Player_QuarterView = m_Player.FindAction("QuarterView", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1319,8 +1382,11 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_UnDo;
-    private readonly InputAction m_Player_ReLoadScene;
+    private readonly InputAction m_Player_ReLoadStage;
     private readonly InputAction m_Player_Escape;
+    private readonly InputAction m_Player_TopView;
+    private readonly InputAction m_Player_FirstView;
+    private readonly InputAction m_Player_QuarterView;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1373,13 +1439,25 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @UnDo => m_Wrapper.m_Player_UnDo;
         /// <summary>
-        /// Provides access to the underlying input action "Player/ReLoadScene".
+        /// Provides access to the underlying input action "Player/ReLoadStage".
         /// </summary>
-        public InputAction @ReLoadScene => m_Wrapper.m_Player_ReLoadScene;
+        public InputAction @ReLoadStage => m_Wrapper.m_Player_ReLoadStage;
         /// <summary>
         /// Provides access to the underlying input action "Player/Escape".
         /// </summary>
         public InputAction @Escape => m_Wrapper.m_Player_Escape;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/TopView".
+        /// </summary>
+        public InputAction @TopView => m_Wrapper.m_Player_TopView;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/FirstView".
+        /// </summary>
+        public InputAction @FirstView => m_Wrapper.m_Player_FirstView;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/QuarterView".
+        /// </summary>
+        public InputAction @QuarterView => m_Wrapper.m_Player_QuarterView;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1436,12 +1514,21 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @UnDo.started += instance.OnUnDo;
             @UnDo.performed += instance.OnUnDo;
             @UnDo.canceled += instance.OnUnDo;
-            @ReLoadScene.started += instance.OnReLoadScene;
-            @ReLoadScene.performed += instance.OnReLoadScene;
-            @ReLoadScene.canceled += instance.OnReLoadScene;
+            @ReLoadStage.started += instance.OnReLoadStage;
+            @ReLoadStage.performed += instance.OnReLoadStage;
+            @ReLoadStage.canceled += instance.OnReLoadStage;
             @Escape.started += instance.OnEscape;
             @Escape.performed += instance.OnEscape;
             @Escape.canceled += instance.OnEscape;
+            @TopView.started += instance.OnTopView;
+            @TopView.performed += instance.OnTopView;
+            @TopView.canceled += instance.OnTopView;
+            @FirstView.started += instance.OnFirstView;
+            @FirstView.performed += instance.OnFirstView;
+            @FirstView.canceled += instance.OnFirstView;
+            @QuarterView.started += instance.OnQuarterView;
+            @QuarterView.performed += instance.OnQuarterView;
+            @QuarterView.canceled += instance.OnQuarterView;
         }
 
         /// <summary>
@@ -1483,12 +1570,21 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @UnDo.started -= instance.OnUnDo;
             @UnDo.performed -= instance.OnUnDo;
             @UnDo.canceled -= instance.OnUnDo;
-            @ReLoadScene.started -= instance.OnReLoadScene;
-            @ReLoadScene.performed -= instance.OnReLoadScene;
-            @ReLoadScene.canceled -= instance.OnReLoadScene;
+            @ReLoadStage.started -= instance.OnReLoadStage;
+            @ReLoadStage.performed -= instance.OnReLoadStage;
+            @ReLoadStage.canceled -= instance.OnReLoadStage;
             @Escape.started -= instance.OnEscape;
             @Escape.performed -= instance.OnEscape;
             @Escape.canceled -= instance.OnEscape;
+            @TopView.started -= instance.OnTopView;
+            @TopView.performed -= instance.OnTopView;
+            @TopView.canceled -= instance.OnTopView;
+            @FirstView.started -= instance.OnFirstView;
+            @FirstView.performed -= instance.OnFirstView;
+            @FirstView.canceled -= instance.OnFirstView;
+            @QuarterView.started -= instance.OnQuarterView;
+            @QuarterView.performed -= instance.OnQuarterView;
+            @QuarterView.canceled -= instance.OnQuarterView;
         }
 
         /// <summary>
@@ -1860,12 +1956,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnUnDo(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "ReLoadScene" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ReLoadStage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnReLoadScene(InputAction.CallbackContext context);
+        void OnReLoadStage(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Escape" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1873,6 +1969,27 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEscape(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "TopView" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTopView(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FirstView" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFirstView(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "QuarterView" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuarterView(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

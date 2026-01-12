@@ -9,6 +9,7 @@ public class LevelGenerator : MonoBehaviour
 
     private Dictionary<ENodeShape, PoolableObjSO> _shapeMap;
     private Dictionary<Vector3Int, SpatialNode> _nodeMap = new Dictionary<Vector3Int, SpatialNode>();
+
     private void Awake()
     {
         GenerateShapeMap();
@@ -32,6 +33,10 @@ public class LevelGenerator : MonoBehaviour
     }
 
     public void GenerateLevel(NodeGraphSO nodeGraph)
+    {
+        GenerateLevel(nodeGraph, true);
+    }
+    public void GenerateLevel(NodeGraphSO nodeGraph, bool doIntro)
     {
         if (nodeGraph == null) return;
 
@@ -70,12 +75,26 @@ public class LevelGenerator : MonoBehaviour
                 Utils.Log($"[LevelGenerator] {nodeData.nodeShape}에 해당하는 프리팹 설정이 PoolConfigs에 없습니다.");
             }
         }
-        if (startNode != null)
+        if (startNode != null && finishNode != null)
         {
             PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldPosition);
             player.Init(_nodeMap, startNode);
             Managers.Camera.SetPlayerTarget(player);
-            _ = Managers.Camera.StartStageIntro(startNode.WorldPosition, finishNode.WorldPosition, 4.0f);
+            if (doIntro)
+            {
+                float introTime = startNode.WorldPosition.x - finishNode.WorldPosition.x;
+                _ = Managers.Camera.StartStageIntro(startNode.WorldPosition, finishNode.WorldPosition, introTime);
+            }
+            else
+            {
+                _ = ChangeViewAtReloadStage();
+            }
         }
+    }
+    private async Awaitable ChangeViewAtReloadStage()
+    {
+        Managers.Camera.ChangeView(EViewMode.Lobby);
+        await Awaitable.NextFrameAsync(destroyCancellationToken);
+        Managers.Camera.ChangeView(EViewMode.Quarter);
     }
 }

@@ -47,3 +47,4 @@ MonoBehaviour:
   _stageRepository:
   - {fileID: 11400000, guid: 4fa6cb0fd1382554e967a2a28bedf02b, type: 2}
   - {fileID: 11400000, guid: 6ec7a5d5ec45d88459a79ebad1fbda87, type: 2}
+  - {fileID: 11400000, guid: 0eee58700b80c744e80b2fbe7e63ea61, type: 2}

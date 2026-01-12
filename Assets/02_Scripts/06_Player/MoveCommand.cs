@@ -26,8 +26,10 @@ public class MoveCommand : ICommand
             .OnComplete(() =>
             {
                 _player.SetCurrentNode(_toNode);
+                _player.SetFromNode(_fromNode);
                 _player.IsGoTo = false;
                 _player.IsMoving = false;
+                _player.OnPlayerMoving.Raised(_player.IsMoving);
             });
     }
 
@@ -42,6 +44,15 @@ public class MoveCommand : ICommand
                 _player.SetCurrentNode(_fromNode);
                 _player.IsGoFrom = false;
                 _player.IsMoving = false;
+                _player.OnPlayerMoving.Raised(_player.IsMoving);
             });
+    }
+    public bool CheckUnDo()
+    {
+        if (_player.CurrentView != EViewMode.Top && _fromNode.WorldPosition.y != _toNode.WorldPosition.y)
+        {
+            return false;
+        }
+        return true;
     }
 }

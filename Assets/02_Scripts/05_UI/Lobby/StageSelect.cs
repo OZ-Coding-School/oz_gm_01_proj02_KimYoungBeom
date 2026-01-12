@@ -38,7 +38,7 @@ public class StageSelect : MonoBehaviour
             btn.stageNum = i;
 
             var color = btn.BtnImage.color;
-            if (i > Managers.Data.clearedStageNum)
+            if (i > Managers.Data.ClearedStageNum)
             {
                 color.a = _notClearedBtnAlpha;
                 btn.Button.enabled = false;
