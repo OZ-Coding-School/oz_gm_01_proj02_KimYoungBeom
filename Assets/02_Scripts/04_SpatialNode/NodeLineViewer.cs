@@ -15,7 +15,15 @@ public class NodeLineViewer : MonoBehaviour
     [Range(0.01f, 0.2f)] public float lineWidth = 0.05f;
 
     private void OnValidate() => UpdateVisuals();
-    private void OnEnable() => UpdateVisuals();
+    private void OnEnable()
+    {
+        UpdateVisuals();
+        _spatialNode.OnUpdateVisuals += UpdateVisuals;
+    }
+    private void OnDisable()
+    {
+        _spatialNode.OnUpdateVisuals -= UpdateVisuals;
+    }
 
     public void UpdateVisuals()
     {

@@ -9,6 +9,9 @@ public static class Defines
     //플레이어
     public static readonly Vector3 PLAYER_Y_OFFSET = new Vector3(0.0f, 0.5f, 0.0f);
 
+    //노드
+    public const int MAX_NODE_COUNT = 50;
+
     //애니메이션
     public static readonly int IDLE_HASH = Animator.StringToHash("Idle");
     public static readonly int SAD_IDLE_HASH = Animator.StringToHash("SadIdle");
@@ -26,7 +29,7 @@ public enum ENodeShape
 }
 public enum ENodeState
 {
-    None, Start, Finish
+    None, Start, Finish, Moving
 }
 public enum EViewMode
 {

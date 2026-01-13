@@ -44,11 +44,6 @@ public class Managers : MonoBehaviour
             GameObject cameraGo = Instantiate(_cameraManagerPrefab, transform);
             Camera = cameraGo.GetComponent<CameraManager>();
         }
-        if (_poolManagerPrefab != null)
-        {
-            GameObject poolGo = Instantiate(_poolManagerPrefab, transform);
-            Pool = poolGo.GetComponent<PoolManager>();
-        }
         if (_gameManagerPrefab != null)
         {
             GameObject gameGo = Instantiate(_gameManagerPrefab, transform);
@@ -58,6 +53,11 @@ public class Managers : MonoBehaviour
         {
             GameObject stageGo = Instantiate(_stageManagerPrefab, transform);
             Stage = stageGo.GetComponent<StageManager>();
+        }
+        if (_poolManagerPrefab != null)
+        {
+            GameObject poolGo = Instantiate(_poolManagerPrefab, transform);
+            Pool = poolGo.GetComponent<PoolManager>();
         }
         if (Data != null)
         {

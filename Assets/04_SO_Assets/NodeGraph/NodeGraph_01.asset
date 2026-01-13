@@ -13,7 +13,43 @@ MonoBehaviour:
   m_Name: NodeGraph_01
   m_EditorClassIdentifier: Assembly-CSharp::NodeGraphSO
   _nodes:
-  - worldPos: {x: -1, y: 0, z: 1}
+  - worldCoord: {x: 0, y: 0, z: 0}
+    gridCoord: {x: 0, y: 0}
+    allowedDirs:
+    - {x: 0, y: 1}
+    - {x: -1, y: 0}
+    nodeShape: 4
+    nodeState: 1
+  - worldCoord: {x: -2, y: 0, z: 0}
+    gridCoord: {x: -2, y: 0}
+    allowedDirs:
+    - {x: 0, y: 1}
+    - {x: 1, y: 0}
+    nodeShape: 3
+    nodeState: 0
+  - worldCoord: {x: -2, y: 0, z: 2}
+    gridCoord: {x: -2, y: 2}
+    allowedDirs:
+    - {x: 0, y: -1}
+    - {x: 1, y: 0}
+    nodeShape: 5
+    nodeState: 2
+  - worldCoord: {x: 0, y: 0, z: 2}
+    gridCoord: {x: 0, y: 2}
+    allowedDirs:
+    - {x: 0, y: -1}
+    - {x: -1, y: 0}
+    nodeShape: 6
+    nodeState: 0
+  - worldCoord: {x: -1, y: 0, z: 2}
+    gridCoord: {x: -1, y: 2}
+    allowedDirs:
+    - {x: 0, y: -1}
+    - {x: -1, y: 0}
+    - {x: 1, y: 0}
+    nodeShape: 7
+    nodeState: 0
+  - worldCoord: {x: -1, y: 0, z: 1}
     gridCoord: {x: -1, y: 1}
     allowedDirs:
     - {x: 0, y: 1}
@@ -22,43 +58,7 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 0
     nodeState: 0
-  - worldPos: {x: 0, y: 0, z: 2}
-    gridCoord: {x: 0, y: 2}
-    allowedDirs:
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    nodeShape: 6
-    nodeState: 0
-  - worldPos: {x: -2, y: 0, z: 2}
-    gridCoord: {x: -2, y: 2}
-    allowedDirs:
-    - {x: 0, y: -1}
-    - {x: 1, y: 0}
-    nodeShape: 5
-    nodeState: 2
-  - worldPos: {x: 0, y: 0, z: 0}
-    gridCoord: {x: 0, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: -1, y: 0}
-    nodeShape: 4
-    nodeState: 1
-  - worldPos: {x: -2, y: 0, z: 0}
-    gridCoord: {x: -2, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 1, y: 0}
-    nodeShape: 3
-    nodeState: 0
-  - worldPos: {x: -1, y: 0, z: 0}
-    gridCoord: {x: -1, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 8
-    nodeState: 0
-  - worldPos: {x: -2, y: 0, z: 1}
+  - worldCoord: {x: -2, y: 0, z: 1}
     gridCoord: {x: -2, y: 1}
     allowedDirs:
     - {x: 0, y: 1}
@@ -66,7 +66,15 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 10
     nodeState: 0
-  - worldPos: {x: 0, y: 0, z: 1}
+  - worldCoord: {x: -1, y: 0, z: 0}
+    gridCoord: {x: -1, y: 0}
+    allowedDirs:
+    - {x: 0, y: 1}
+    - {x: -1, y: 0}
+    - {x: 1, y: 0}
+    nodeShape: 8
+    nodeState: 0
+  - worldCoord: {x: 0, y: 0, z: 1}
     gridCoord: {x: 0, y: 1}
     allowedDirs:
     - {x: 0, y: 1}
@@ -74,12 +82,4 @@ MonoBehaviour:
     - {x: -1, y: 0}
     nodeShape: 9
     nodeState: 0
-  - worldPos: {x: -1, y: 0, z: 2}
-    gridCoord: {x: -1, y: 2}
-    allowedDirs:
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 7
-    nodeState: 0
-  _turnCount: 5
+  _turnCount: 4

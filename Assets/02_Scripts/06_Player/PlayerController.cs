@@ -5,14 +5,15 @@ public class PlayerController : PoolableComponent
 {
     #region 참조
     [Header("수치제어")]
-    [SerializeField] private float _moveDuration = 0.87f;
+    [SerializeField] private float _moveDuration = 0.9f;
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
-
+    [SerializeField] private float _durationMultiplier = 0.65f;
     [Header("이벤트 발송")]
-    [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode;
-    [SerializeField] private VoidEventCHSO _onStageClear;
-    [SerializeField] private BoolEventCHSO _onPlayerMoving;
+    [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
+    [SerializeField] private VoidEventCHSO _onStageClear;               //GameManager 구독
+    [SerializeField] private BoolEventCHSO _onPlayerMoving;             //BtnAndViewController 구독
+    [SerializeField] private VoidEventCHSO _onPlayerTurnEnd;            //StageManager 구독
 
     [Header("컴포넌트 참조")]
     [SerializeField] private Transform _eyePoint;
@@ -55,6 +56,7 @@ public class PlayerController : PoolableComponent
     public Animator Anim => _anim;
     public float SadIdleCool => _sadIdleCool;
     public VoidEventCHSO OnStageClear => _onStageClear;
+    public VoidEventCHSO OnPlayerTurnEnd => _onPlayerTurnEnd;
     public Transform EyePoint => _eyePoint;
     public EViewMode CurrentView => _currentView;
     //이벤트
@@ -82,13 +84,17 @@ public class PlayerController : PoolableComponent
     {
         Managers.Input.onMoveEvent += OnMove;
         Managers.Input.onUnDoEvent += OnUnDo;
+
         Managers.Camera.onViewChanged += HandleViewChanged;
+
+        Managers.Stage.onStageTurnEnd += HandleStageTurnEnd;
     }
     private void OnDisable()
     {
         Managers.Input.onMoveEvent -= OnMove;
         Managers.Input.onUnDoEvent -= OnUnDo;
         Managers.Camera.onViewChanged -= HandleViewChanged;
+        Managers.Stage.onStageTurnEnd -= HandleStageTurnEnd;
     }
     private void Update()
     {
@@ -108,7 +114,7 @@ public class PlayerController : PoolableComponent
     {
         InitAtDespawn();
         SetCurrentNode(startNode);
-        transform.position = startNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
+        transform.position = startNode.WorldCoordinate + Defines.PLAYER_Y_OFFSET;
         _history.Clear();
     }
     #endregion
@@ -125,6 +131,10 @@ public class PlayerController : PoolableComponent
     private void HandleViewChanged(EViewMode mode)
     {
         _currentView = mode;
+    }
+    private void HandleStageTurnEnd()
+    {
+        transform.SetParent(Managers.Pool.transform);
     }
     #endregion
 
@@ -145,7 +155,9 @@ public class PlayerController : PoolableComponent
     #region 커맨드패턴
     public void OnMove(Vector2 input)
     {
+        if (Managers.Stage.IsStageTurn) return;
         if (IsMoving || CurrentNode == null) return;
+
         Vector2Int dir = GetDiscreteDirection(input);
 
         if (dir != Vector2Int.zero)
@@ -157,6 +169,7 @@ public class PlayerController : PoolableComponent
 
     public void OnUnDo()
     {
+        if (Managers.Stage.IsStageTurn) return;
         if (IsMoving || _history.Count == 0) return;
         if (Managers.Camera.IsBlending) return;
         if (_currentView == EViewMode.FirstPerson) return;
@@ -171,8 +184,8 @@ public class PlayerController : PoolableComponent
         if (!Managers.Stage.UseTurn()) return;
 
         RotateStart(lastCommand.MoveDir);
-        IsGoFrom = true;
         IsMoving = true;
+        IsGoFrom = true;
         _onPlayerMoving.Raised(IsMoving);
 
         lastCommand.UnDo();
@@ -187,43 +200,46 @@ public class PlayerController : PoolableComponent
         if (_currentView == EViewMode.Top)
         {
             Vector2Int targetKey = CurrentNode.GridCoordinate + direction;
-            ExecuteCommandByKey(targetKey);
+            ExecuteCommandByKey(targetKey, direction);
         }
         else
         {
-            Vector3Int targetKey = new Vector3Int(
-                CurrentNode.GridCoordinate.x + direction.x,
-                Mathf.RoundToInt(CurrentNode.WorldPosition.y),
-                CurrentNode.GridCoordinate.y + direction.y
-            );
-            ExecuteCommandByKey(targetKey);
+            Vector3Int targetKey = CurrentNode.WorldCoordinate + new Vector3Int(direction.x, 0, direction.y);
+            ExecuteCommandByKey(targetKey, direction);
         }
     }
-    private void ExecuteCommandByKey(Vector3Int targetKey)
+    private void ExecuteCommandByKey(Vector3Int targetKey, Vector2Int dir)
     {
         SpatialNode targetNode = Managers.Stage.GetNodeAt(targetKey);
-        ExecuteCommand(targetNode);
+        ExecuteCommand(targetNode, dir);
     }
-    private void ExecuteCommandByKey(Vector2Int targetKey)
+    private void ExecuteCommandByKey(Vector2Int targetKey, Vector2Int dir)
     {
         SpatialNode targetNode = Managers.Stage.GetNodeAt(targetKey);
-        ExecuteCommand(targetNode);
+        ExecuteCommand(targetNode, dir);
     }
-    private void ExecuteCommand(SpatialNode targetNode)
+    private void ExecuteCommand(SpatialNode targetNode, Vector2Int dir)
     {
-        if (targetNode == null) return;
+        if (!CheckTargetNodeDir(targetNode, dir)) return;
+
         if (Managers.Stage.UseTurn())
         {
-            IsGoTo = true;
             IsMoving = true;
+            IsGoTo = true;
             _onPlayerMoving.Raised(IsMoving);
             MoveCommand moveCmd = new MoveCommand(this, CurrentNode, targetNode, _moveDuration);
 
             moveCmd.Execute();
             _history.Push(moveCmd);
-
+            if (CurrentNode.NodeState == ENodeState.Moving) _history.Clear();
             NotifySpecialNode(targetNode);
         }
+    }
+    private bool CheckTargetNodeDir(SpatialNode target, Vector2Int dir)
+    {
+        if (target == null) return false;
+        if (!target.MoveableDirections.Contains(-dir)) return false;
+        return true;
     }
     #endregion
 
@@ -244,7 +260,11 @@ public class PlayerController : PoolableComponent
         switch (node.NodeState)
         {
             case ENodeState.Finish:
-                _ = NotifySpecialNodeAsync(node, 0.7f);
+                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                break;
+            case ENodeState.Moving:
+                transform.SetParent(node.transform);
+                _history.Clear();
                 break;
             default: break;
         }
@@ -307,6 +327,7 @@ public class PlayerController : PoolableComponent
     }
     private void InitAtDespawn()
     {
+        //transform.SetParent(Managers.Pool.transform);
         DG.Tweening.DOTween.KillAll();
         IsMoving = false;
         IsGoTo = false;

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
@@ -9,15 +7,30 @@ public class StageManager : MonoBehaviour
     [Header("Stage Repository")]
     [SerializeField] private List<NodeGraphSO> _stageRepository = new List<NodeGraphSO>();
 
+    [Header("이벤트 구독")]
+    [SerializeField] private VoidEventCHSO _onPlayerTurnEnd;        //PlayerController 발송
+
     private LevelGenerator _generator;
-    private readonly Dictionary<Vector3Int, SpatialNode> _nodeMap3D = new Dictionary<Vector3Int, SpatialNode>();
-    private readonly Dictionary<Vector2Int, SpatialNode> _nodeMap2D = new Dictionary<Vector2Int, SpatialNode>();
+    private readonly SpatialNode[,,] _nodeMap3D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
+    private readonly SpatialNode[,] _nodeMap2D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
+    private readonly List<IStageMovable> _movableList = new List<IStageMovable>();
 
     public event Action onTurnCountChange;
-
+    public event Action onStageTurnEnd;
+    public event Action onGenerateLevel;
     public int CurrentTurnCount { get; private set; }
-    public Dictionary<Vector3Int, SpatialNode> NodeMap3D => _nodeMap3D;
-    public Dictionary<Vector2Int, SpatialNode> NodeMap2D => _nodeMap2D;
+    public bool IsStageTurn { get; private set; } = false;
+
+    #region LifeCycle
+    private void OnEnable()
+    {
+        _onPlayerTurnEnd.onEvent += HandlePlayerTurnEnd;
+    }
+    private void OnDisable()
+    {
+        _onPlayerTurnEnd.onEvent -= HandlePlayerTurnEnd;
+    }
+    #endregion
 
     #region 외부호출 함수
     public void RegisterGenerator(LevelGenerator generator)
@@ -50,6 +63,7 @@ public class StageManager : MonoBehaviour
         CurrentTurnCount = nodeGraph.TurnCount;
         _generator.GenerateLevel(nodeGraph, doIntro);
 
+        onGenerateLevel?.Invoke();
         onTurnCountChange?.Invoke();
     }
     public bool UseTurn()
@@ -65,37 +79,88 @@ public class StageManager : MonoBehaviour
     }
     public void SetNodeMap(SpatialNode node)
     {
-        int x = node.GridCoordinate.x;
-        int y = Mathf.RoundToInt(node.WorldPosition.y);
-        int z = node.GridCoordinate.y;
-        Vector3Int key3D = new Vector3Int(x, y, z);
-        Vector2Int key2D = new Vector2Int(x, z);
-        if (!_nodeMap3D.ContainsKey(key3D)) _nodeMap3D[key3D] = node;
-        if (!_nodeMap2D.ContainsKey(key2D)) _nodeMap2D[key2D] = node;
+        var keyForArray3D = CalculateArrayIndex(node.WorldCoordinate);
+        var keyForArray2D = CalculateArrayIndex(node.GridCoordinate);
+
+        _nodeMap3D[keyForArray3D.x, keyForArray3D.y, keyForArray3D.z] = node;
+        _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
+    }
+    public void SetMovableList(IStageMovable movable)
+    {
+        _movableList.Add(movable);
     }
     public SpatialNode GetNodeAt(Vector3Int key)
     {
-        if (_nodeMap3D.TryGetValue(key, out var node))
-        {
-            return node;
-        }
-        return null;
+        var keyForArray = CalculateArrayIndex(key);
+        var node = _nodeMap3D[keyForArray.x, keyForArray.y, keyForArray.z];
+        return node;
     }
     public SpatialNode GetNodeAt(Vector2Int key)
     {
-        if (_nodeMap2D.TryGetValue(key, out var node))
+        var keyForArray = CalculateArrayIndex(key);
+        var node = _nodeMap2D[keyForArray.x, keyForArray.y];
+        return node;
+    }
+    public void UpdateNode(SpatialNode node, Vector3Int from, Vector3Int to)
+    {
+        node.SetCoordinate(to);
+
+        Vector3Int fromKeyForArray = CalculateArrayIndex(from);
+        Vector3Int toKeyForArray = CalculateArrayIndex(to);
+
+
+        _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = null;
+        _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
+
+        _nodeMap3D[fromKeyForArray.x, fromKeyForArray.y, fromKeyForArray.z] = null;
+        _nodeMap3D[toKeyForArray.x, toKeyForArray.y, toKeyForArray.z] = node;
+    }
+    #endregion
+
+    #region 턴 관리
+    private async void StartStageTurn()
+    {
+        if (!IsStageTurn) return;
+
+        List<Awaitable> tasks = new List<Awaitable>();
+        foreach (var obj in _movableList)
         {
-            return node;
+            tasks.Add(obj.ExecuteStageTurn());
         }
-        return null;
+        foreach (var task in tasks)
+        {
+            await task;
+        }
+
+        IsStageTurn = false;
+        onStageTurnEnd?.Invoke();
+    }
+    #endregion
+
+    #region 이벤트 핸들러
+    private void HandlePlayerTurnEnd()
+    {
+        if (IsStageTurn) return;
+        IsStageTurn = true;
+
+        StartStageTurn();
     }
     #endregion
 
     #region Helper
     private void InitNodeMap()
     {
-        _nodeMap2D.Clear();
-        _nodeMap3D.Clear();
+        Array.Clear(_nodeMap2D, 0, _nodeMap2D.Length);
+        Array.Clear(_nodeMap3D, 0, _nodeMap3D.Length);
+        _movableList.Clear();
+    }
+    private Vector3Int CalculateArrayIndex(Vector3Int target)
+    {
+        return new Vector3Int(-target.x, -target.y, target.z);
+    }
+    private Vector2Int CalculateArrayIndex(Vector2Int target)
+    {
+        return new Vector2Int(-target.x, target.y);
     }
     #endregion
 }

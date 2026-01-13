@@ -1186,20 +1186,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a77c0ffb4cd3fe4fb875bf6db43af79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelGenerator
-  _nodePoolDataList:
-  - {fileID: 11400000, guid: 5f53141aff8e4064d93fa3a9e3736c39, type: 2}
-  - {fileID: 11400000, guid: 273c14d55b9380447b10891486a57d64, type: 2}
-  - {fileID: 11400000, guid: fc66ddc571da249498a14a5013b390d2, type: 2}
-  - {fileID: 11400000, guid: c43fdbdea17d9c243adeb66c0d7aa852, type: 2}
-  - {fileID: 11400000, guid: d2bc31dcd97cbd04cbd7756f5c3a24de, type: 2}
-  - {fileID: 11400000, guid: 46db43458b369be4b8dfd8fbb6765966, type: 2}
-  - {fileID: 11400000, guid: 3a38bfa764feefd44a63422485649040, type: 2}
-  - {fileID: 11400000, guid: 2f9fa17c7d15fcb47adb1553a2ae8dd3, type: 2}
-  - {fileID: 11400000, guid: bb8c6df9e3762954396337e378102c9e, type: 2}
-  - {fileID: 11400000, guid: 612d1ab4494e6184a841f09bfccd251d, type: 2}
-  - {fileID: 11400000, guid: 69c50220e14890f4d885ca9c2f499899, type: 2}
+  _basicNodePoolData: {fileID: 11400000, guid: 5f53141aff8e4064d93fa3a9e3736c39, type: 2}
+  _movingNodePoolData: {fileID: 11400000, guid: 891587e1cbb84ca44b969321c2c359c3, type: 2}
   _playerPoolData: {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
-  _goalPoolData: {fileID: 11400000, guid: e0e5c5d1f5d41634ab5cd4d2c32cb61b, type: 2}
+  _goalPoolData: {fileID: 11400000, guid: b2804ae65c16e61428735d76090c0b81, type: 2}
 --- !u!1 &1395623066
 GameObject:
   m_ObjectHideFlags: 0

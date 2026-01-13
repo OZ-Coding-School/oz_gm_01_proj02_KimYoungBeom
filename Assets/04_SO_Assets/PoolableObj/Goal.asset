@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be9984f7c2fc8bb4fbcdd221f20c22bc, type: 3}
-  m_Name: PoolData_TLNode
+  m_Name: Goal
   m_EditorClassIdentifier: Assembly-CSharp::PoolableObjSO
-  prefab: {fileID: 3917627405031261269, guid: 0fe24502f86152a4598413157d62d935, type: 3}
-  defaultCapacity: 30
-  maxSize: 200
+  prefab: {fileID: 980925433033243702, guid: 10e99f7bde2aa8f4681cbebfdcee4eb9, type: 3}
+  defaultCapacity: 2
+  maxSize: 4

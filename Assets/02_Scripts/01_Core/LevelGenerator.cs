@@ -3,32 +3,14 @@ using System.Collections.Generic;
 
 public class LevelGenerator : MonoBehaviour
 {
-    [SerializeField] private List<PoolableObjSO> _nodePoolDataList;
+    [SerializeField] private PoolableObjSO _basicNodePoolData;
+    [SerializeField] private PoolableObjSO _movingNodePoolData;
     [SerializeField] private PoolableObjSO _playerPoolData;
     [SerializeField] private PoolableObjSO _goalPoolData;
 
-    private Dictionary<ENodeShape, PoolableObjSO> _shapeMap;
-
     private void Awake()
     {
-        GenerateShapeMap();
         Managers.Stage.RegisterGenerator(this);
-    }
-
-    private void GenerateShapeMap()
-    {
-        _shapeMap = new Dictionary<ENodeShape, PoolableObjSO>();
-
-        foreach (var config in _nodePoolDataList)
-        {
-            if (config.prefab is SpatialNode spatialPrefab)
-            {
-                if (!_shapeMap.ContainsKey(spatialPrefab.NodeShape))
-                {
-                    _shapeMap.Add(spatialPrefab.NodeShape, config);
-                }
-            }
-        }
     }
 
     public void GenerateLevel(NodeGraphSO nodeGraph)
@@ -46,37 +28,43 @@ public class LevelGenerator : MonoBehaviour
 
         foreach (var nodeData in nodeGraph.Nodes)
         {
-            if (_shapeMap.TryGetValue(nodeData.nodeShape, out var targetPool))
+            SpatialNode node = null;
+            switch (nodeData.nodeState)
             {
-                SpatialNode node = Managers.Pool.Spawn<SpatialNode>(targetPool, nodeData.worldPos);
-                node.InjectData(nodeData);
-
-                Managers.Stage.SetNodeMap(node);
-
-                if (node.NodeState == ENodeState.Start)
-                {
-                    startNode = node;
-                }
-                if (node.NodeState == ENodeState.Finish)
-                {
-                    Managers.Pool.Spawn<Piece_Goal>(_goalPoolData, node.WorldPosition);
-                    finishNode = node;
-                }
+                case ENodeState.Moving:
+                    node = Managers.Pool.Spawn<MovingSpatialNode>(_movingNodePoolData, nodeData.worldCoord);
+                    break;
+                default:
+                    node = Managers.Pool.Spawn<SpatialNode>(_basicNodePoolData, nodeData.worldCoord);
+                    break;
             }
-            else
+            node.InjectData(nodeData);
+
+            Managers.Stage.SetNodeMap(node);
+
+            if (node.NodeState == ENodeState.Start)
             {
-                Utils.Log($"[LevelGenerator] {nodeData.nodeShape}에 해당하는 프리팹 설정이 PoolConfigs에 없습니다.");
+                startNode = node;
+            }
+            if (node.NodeState == ENodeState.Finish)
+            {
+                Managers.Pool.Spawn<Piece_Goal>(_goalPoolData, node.WorldCoordinate);
+                finishNode = node;
+            }
+            if (node is IStageMovable moveNode)
+            {
+                Managers.Stage.SetMovableList(moveNode);
             }
         }
         if (startNode != null && finishNode != null)
         {
-            PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldPosition);
+            PlayerController player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, startNode.WorldCoordinate);
             player.Init(startNode);
             Managers.Camera.SetPlayerTarget(player);
             if (doIntro)
             {
-                float introTime = startNode.WorldPosition.x - finishNode.WorldPosition.x;
-                _ = Managers.Camera.StartStageIntro(startNode.WorldPosition, finishNode.WorldPosition, introTime);
+                float introTime = startNode.WorldCoordinate.x - finishNode.WorldCoordinate.x;
+                _ = Managers.Camera.StartStageIntro(startNode.WorldCoordinate, finishNode.WorldCoordinate, introTime);
             }
             else
             {

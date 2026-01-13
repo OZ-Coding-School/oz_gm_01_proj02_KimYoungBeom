@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83cd152954eabd4458b7c7fbb536a2d2, type: 3}
-  m_Name: NodeGraph_03
+  m_Name: NodeGraph_04
   m_EditorClassIdentifier: Assembly-CSharp::NodeGraphSO
   _nodes:
   - worldCoord: {x: 0, y: 0, z: 0}
@@ -39,10 +39,11 @@ MonoBehaviour:
   - worldCoord: {x: -2, y: 0, z: 1}
     gridCoord: {x: -2, y: 1}
     allowedDirs:
+    - {x: 0, y: 1}
     - {x: 0, y: -1}
     - {x: -1, y: 0}
     - {x: 1, y: 0}
-    nodeShape: 7
+    nodeShape: 0
     nodeState: 0
   - worldCoord: {x: 0, y: 0, z: 1}
     gridCoord: {x: 0, y: 1}
@@ -55,10 +56,10 @@ MonoBehaviour:
   - worldCoord: {x: -2, y: 0, z: 2}
     gridCoord: {x: -2, y: 2}
     allowedDirs:
-    - {x: 0, y: 1}
+    - {x: 0, y: -1}
     - {x: -1, y: 0}
     - {x: 1, y: 0}
-    nodeShape: 8
+    nodeShape: 7
     nodeState: 0
   - worldCoord: {x: 0, y: 0, z: 2}
     gridCoord: {x: 0, y: 2}
@@ -70,10 +71,9 @@ MonoBehaviour:
   - worldCoord: {x: -3, y: 0, z: 2}
     gridCoord: {x: -3, y: 2}
     allowedDirs:
-    - {x: 0, y: 1}
     - {x: 0, y: -1}
     - {x: 1, y: 0}
-    nodeShape: 10
+    nodeShape: 5
     nodeState: 0
   - worldCoord: {x: -3, y: 0, z: 1}
     gridCoord: {x: -3, y: 1}
@@ -83,31 +83,31 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 10
     nodeState: 0
-  - worldCoord: {x: -3, y: 0, z: 3}
-    gridCoord: {x: -3, y: 3}
+  - worldCoord: {x: -3, y: 0, z: 4}
+    gridCoord: {x: -3, y: 4}
     allowedDirs:
     - {x: 0, y: -1}
     - {x: 1, y: 0}
     nodeShape: 5
-    nodeState: 0
-  - worldCoord: {x: -2, y: 0, z: 3}
-    gridCoord: {x: -2, y: 3}
-    allowedDirs:
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 7
     nodeState: 2
-  - worldCoord: {x: -1, y: 0, z: 3}
-    gridCoord: {x: -1, y: 3}
+  - worldCoord: {x: -2, y: 0, z: 4}
+    gridCoord: {x: -2, y: 4}
     allowedDirs:
     - {x: 0, y: -1}
     - {x: -1, y: 0}
     - {x: 1, y: 0}
     nodeShape: 7
     nodeState: 0
-  - worldCoord: {x: 0, y: 0, z: 3}
-    gridCoord: {x: 0, y: 3}
+  - worldCoord: {x: -1, y: 0, z: 4}
+    gridCoord: {x: -1, y: 4}
+    allowedDirs:
+    - {x: 0, y: -1}
+    - {x: -1, y: 0}
+    - {x: 1, y: 0}
+    nodeShape: 7
+    nodeState: 0
+  - worldCoord: {x: 0, y: 0, z: 4}
+    gridCoord: {x: 0, y: 4}
     allowedDirs:
     - {x: 0, y: -1}
     - {x: -1, y: 0}
@@ -129,4 +129,4 @@ MonoBehaviour:
     - {x: 1, y: 0}
     nodeShape: 0
     nodeState: 3
-  _turnCount: 6
+  _turnCount: 10
