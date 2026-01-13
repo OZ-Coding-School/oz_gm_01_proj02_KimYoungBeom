@@ -20,7 +20,7 @@ public class MoveCommand : ICommand
 
     public void Execute()
     {
-        Vector3 targetPos = _toNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
+        Vector3 targetPos = _toNode.WorldCoordinate + Defines.PLAYER_Y_OFFSET;
         _player.transform.DOMove(targetPos, _duration)
             .SetEase(Ease.OutQuad)
             .OnComplete(() =>
@@ -29,12 +29,13 @@ public class MoveCommand : ICommand
                 _player.IsGoTo = false;
                 _player.IsMoving = false;
                 _player.OnPlayerMoving.Raised(_player.IsMoving);
+                _player.OnPlayerTurnEnd.Raised();
             });
     }
 
     public void UnDo()
     {
-        Vector3 undoPos = _fromNode.WorldPosition + Defines.PLAYER_Y_OFFSET;
+        Vector3 undoPos = _fromNode.WorldCoordinate + Defines.PLAYER_Y_OFFSET;
 
         _player.transform.DOMove(undoPos, _duration)
             .SetEase(Ease.InOutSine)
@@ -48,7 +49,7 @@ public class MoveCommand : ICommand
     }
     public bool CheckUnDo()
     {
-        if (_player.CurrentView != EViewMode.Top && _fromNode.WorldPosition.y != _toNode.WorldPosition.y)
+        if (_player.CurrentView != EViewMode.Top && _fromNode.WorldCoordinate.y != _toNode.WorldCoordinate.y)
         {
             return false;
         }

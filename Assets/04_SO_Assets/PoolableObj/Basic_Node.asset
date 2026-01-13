@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be9984f7c2fc8bb4fbcdd221f20c22bc, type: 3}
-  m_Name: PoolData_DLNode
+  m_Name: Basic_Node
   m_EditorClassIdentifier: Assembly-CSharp::PoolableObjSO
-  prefab: {fileID: 7958858068322139439, guid: a2fc9cfa34b9e0a4ca0c9eb02a2cb82c, type: 3}
-  defaultCapacity: 30
-  maxSize: 200
+  prefab: {fileID: 8162253009267182055, guid: 57146ad9dc06be545bc3f9831d7dc566, type: 3}
+  defaultCapacity: 200
+  maxSize: 300

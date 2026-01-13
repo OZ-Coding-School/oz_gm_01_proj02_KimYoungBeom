@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be9984f7c2fc8bb4fbcdd221f20c22bc, type: 3}
-  m_Name: PoolData_VcalNode
+  m_Name: Moving_Node
   m_EditorClassIdentifier: Assembly-CSharp::PoolableObjSO
-  prefab: {fileID: 7900202969403703696, guid: 4377b4ba1e9dbc048b44f0799347d410, type: 3}
-  defaultCapacity: 30
-  maxSize: 200
+  prefab: {fileID: 2952965651513162186, guid: 9c653e7f80253254cb51dd45841fb7ee, type: 3}
+  defaultCapacity: 5
+  maxSize: 10

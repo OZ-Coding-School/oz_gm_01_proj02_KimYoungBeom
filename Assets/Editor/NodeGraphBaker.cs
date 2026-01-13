@@ -31,15 +31,20 @@ public class NodeGraphBaker : EditorWindow
         SpatialNode[] sceneNodes = nodeRoot.GetComponentsInChildren<SpatialNode>();
         foreach (var node in sceneNodes)
         {
-            Vector2Int calcCoord = new Vector2Int(
+            Vector2Int calcGridCoord = new Vector2Int(
                 Mathf.RoundToInt(node.transform.position.x / gridUnit),
                 Mathf.RoundToInt(node.transform.position.z / gridUnit)
+            );
+            Vector3Int calcWorldCoord = new Vector3Int(
+                calcGridCoord.x,
+                Mathf.RoundToInt(node.transform.position.y / gridUnit),
+                calcGridCoord.y
             );
 
             NodeData newData = new NodeData
             {
-                worldPos = node.transform.position,
-                gridCoord = calcCoord,
+                worldCoord = calcWorldCoord,
+                gridCoord = calcGridCoord,
                 allowedDirs = GetDirectionsFromShape(node.NodeShape),
                 nodeShape = node.NodeShape,
                 nodeState = node.NodeState,

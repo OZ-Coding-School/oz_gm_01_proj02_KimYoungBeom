@@ -29,7 +29,7 @@ public class BtnAndViewController : MonoBehaviour
         Managers.Input.onFirstViewEvent += OnChangeFirstPersonView;
         Managers.Input.onTopViewEvent += OnChangeTopView;
         Managers.Input.onQuarterViewEvent += OnChangeQuarterView;
-        Managers.Input.onReloadStageEvent += OnReloadStage;
+        Managers.Stage.onGenerateLevel += OnReloadStage;
 
         Managers.Camera.onViewChanged += HandleViewChanged;
 
@@ -40,7 +40,7 @@ public class BtnAndViewController : MonoBehaviour
         Managers.Input.onFirstViewEvent -= OnChangeFirstPersonView;
         Managers.Input.onTopViewEvent -= OnChangeTopView;
         Managers.Input.onQuarterViewEvent -= OnChangeQuarterView;
-        Managers.Input.onReloadStageEvent -= OnReloadStage;
+        Managers.Stage.onGenerateLevel -= OnReloadStage;
 
         Managers.Camera.onViewChanged -= HandleViewChanged;
 

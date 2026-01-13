@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,30 +7,34 @@ using UnityEngine.VFX;
 public class SpatialNode : PoolableComponent, INode
 {
     [Header("Node Shape")]
-    [SerializeField] private ENodeShape _nodeShape;
-    [SerializeField] private ENodeState _nodeState;
+    [SerializeField] protected ENodeShape _nodeShape;
+    [SerializeField] protected ENodeState _nodeState;
 
     [Header("Visuals")]
-    [SerializeField] private MeshRenderer _meshRenderer;
-    [SerializeField] private VisualEffect _vfxGraph;
+    [SerializeField] protected MeshRenderer _meshRenderer;
+    [SerializeField] protected VisualEffect _vfxGraph;
 
-    private NodeData _data;
+    protected NodeData _data;
 
-    private MaterialPropertyBlock _propBlock;
-    private static readonly int DissolveAmount = Shader.PropertyToID("_DissolveAmount");
+    protected MaterialPropertyBlock _propBlock;
+    protected static readonly int DissolveAmount = Shader.PropertyToID("_DissolveAmount");
 
-    public Vector3 WorldPosition => transform.position;
-    public Vector2Int GridCoordinate => _data.gridCoord;
+    public Vector3Int WorldCoordinate { get; private set; }
+
+    public Vector2Int GridCoordinate { get; private set; }
     public List<Vector2Int> MoveableDirections => _data.allowedDirs;
     public ENodeShape NodeShape => _nodeShape;
     public ENodeState NodeState => _nodeState;
-    public System.Action OnStateChanged { get; set; }
-
+    public Action OnStateChanged { get; set; }
+    public event Action OnUpdateVisuals;
     public void InjectData(NodeData data)
     {
         _data = data;
-        _nodeState = data.nodeState;
+        SetCoordinate(_data.WorldCoordinate);
+        _nodeShape = _data.nodeShape;
+        _nodeState = _data.nodeState;
         OnStateChanged?.Invoke();
+        OnUpdateVisuals?.Invoke();
     }
 
     public override void OnSpawn()
@@ -45,7 +50,17 @@ public class SpatialNode : PoolableComponent, INode
     {
         StartCoroutine(FoldingRoutine(duration));
     }
-    private void ResetVisuals()
+    public void SetCoordinate(Vector2Int gridCoordinate)
+    {
+        GridCoordinate = gridCoordinate;
+        WorldCoordinate = new Vector3Int(gridCoordinate.x, WorldCoordinate.y, gridCoordinate.y);
+    }
+    public void SetCoordinate(Vector3Int worldCoordinate)
+    {
+        WorldCoordinate = worldCoordinate;
+        GridCoordinate = new Vector2Int(worldCoordinate.x, worldCoordinate.z);
+    }
+    protected void ResetVisuals()
     {
         if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
 
@@ -54,7 +69,7 @@ public class SpatialNode : PoolableComponent, INode
 
         _meshRenderer.enabled = true;
     }
-    private IEnumerator FoldingRoutine(float duration)
+    protected IEnumerator FoldingRoutine(float duration)
     {
         float elapsed = 0;
         while (elapsed < duration)

@@ -138,6 +138,7 @@ MonoBehaviour:
   _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}
   _onStageClear: {fileID: 11400000, guid: 682f5d0cd6177174ea7c8a5881c8da83, type: 2}
   _onPlayerMoving: {fileID: 11400000, guid: 53228c92d2a266d4182d47a5f0a845e1, type: 2}
+  _onPlayerTurnEnd: {fileID: 11400000, guid: 851c46520da9a4648af6765ddf15acad, type: 2}
   _eyePoint: {fileID: 8086356246973295789}
 --- !u!4 &4555590277987764581 stripped
 Transform:

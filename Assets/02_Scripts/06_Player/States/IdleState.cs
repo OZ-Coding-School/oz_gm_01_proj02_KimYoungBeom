@@ -8,7 +8,7 @@ public class IdleState : PlayerState
     public override void Enter()
     {
         _elapsedTimeBase = 0.0f;
-        _player.Anim.CrossFade(Defines.IDLE_HASH, 0.3f);
+        _player.Anim.CrossFadeInFixedTime(Defines.IDLE_HASH, 0.1f);
     }
     public override void Update() { }
     public override void FixedUpdate()
@@ -21,7 +21,7 @@ public class IdleState : PlayerState
             {
                 _elapsedTimeBase = 0.0f;
                 _isSadIdle = true;
-                _player.Anim.CrossFade(Defines.SAD_IDLE_HASH, 0.1f);
+                _player.Anim.CrossFadeInFixedTime(Defines.SAD_IDLE_HASH, 0.1f);
             }
         }
     }
