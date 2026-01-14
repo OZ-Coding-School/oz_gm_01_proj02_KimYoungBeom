@@ -1,25 +1,44 @@
 using DG.Tweening;
+using Unity.Behavior;
 using UnityEngine;
 
 public class MovingSpatialNode : SpatialNode, IStageMovable
 {
-    private float _moveDuration = 0.5f;
-    private Vector3Int dir = Vector3Int.forward;
+    [SerializeField] private BehaviorGraphAgent _behaviorAgent;
+
+    [Header("BT용 이벤트 구독")]
+    [SerializeField] private Event_ExecuteStageTurn _onExecuteStageTurn;
+    [SerializeField] private Event_ClearStacksRequest _onClearStacksRequest;
+
+    private AwaitableCompletionSource _turnCompletionSource;
+
+    public override void OnSpawn()
+    {
+        base.OnSpawn();
+        _onClearStacksRequest.SendEventMessage();
+    }
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
+        _onClearStacksRequest.SendEventMessage();
+    }
     public async Awaitable ExecuteStageTurn()
     {
         //이동로직 BT로?
+        if (_behaviorAgent == null) return;
 
-        //테스트로 위 아래 번갈아 이동
-        var node = Managers.Stage.GetNodeAt(WorldCoordinate + dir);
-        if (node != null)
-        {
-            dir = -dir;
-        }
-        Vector3Int targetPos = WorldCoordinate + dir;
-        await transform.DOMove(targetPos, _moveDuration)
-            .SetEase(Ease.OutQuad)
-            .Awaiting();
-
-        Managers.Stage.UpdateNode(this, WorldCoordinate, targetPos);
+        _turnCompletionSource = new AwaitableCompletionSource();
+        _onExecuteStageTurn.SendEventMessage();
+        await _turnCompletionSource.Awaitable;
     }
+
+    public void CompleteTurn()
+    {
+        if (_turnCompletionSource != null)
+        {
+            _turnCompletionSource?.SetResult();
+            _turnCompletionSource = null;
+        }
+    }
+
 }

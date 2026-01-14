@@ -91,7 +91,7 @@ public class StageManager : MonoBehaviour
     }
     public SpatialNode GetNodeAt(Vector3Int key)
     {
-        var keyForArray = CalculateArrayIndex(key);
+        Vector3Int keyForArray = CalculateArrayIndex(key);
         var node = _nodeMap3D[keyForArray.x, keyForArray.y, keyForArray.z];
         return node;
     }
