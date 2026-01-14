@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4937104234461646390}
   - component: {fileID: 7237769349655316490}
   - component: {fileID: 2952965651513162186}
+  - component: {fileID: 8454172269249361697}
   m_Layer: 0
   m_Name: Moving_Node
   m_TagString: Untagged
@@ -151,6 +152,65 @@ MonoBehaviour:
   _nodeState: 3
   _meshRenderer: {fileID: 4520776736443373483}
   _vfxGraph: {fileID: 4792869431802927329}
+  _behaviorAgent: {fileID: 8454172269249361697}
+  _onExecuteStageTurn: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
+  _onClearStacksRequest: {fileID: 11400000, guid: a5c217e8d41af6c48944a9532e0cc1df, type: 2}
+--- !u!114 &8454172269249361697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3105143476684207811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
+  m_Graph: {fileID: 38399333871218211, guid: 271a296b72e648c4fa4a15e172da7cc0, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 3934011147559633135
+  - rid: 3934011147559633645
+  - rid: 3934011151682110100
+  - rid: 3934011152537485536
+  m_OriginalGraph: {fileID: 38399333871218211, guid: 271a296b72e648c4fa4a15e172da7cc0, type: 2}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3934011147559633135
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 3105143476684207811}
+    - rid: 3934011147559633645
+      type: {class: 'BlackboardVariable`1[[MovingSpatialNode, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 15604858849760995606
+          m_Value1: 7078404620353781143
+        Name: MovingNode
+        m_Value: {fileID: 2952965651513162186}
+    - rid: 3934011151682110100
+      type: {class: 'BlackboardVariable`1[[Event_ExecuteStageTurn, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 17710534530037236269
+          m_Value1: 4680775363268750128
+        Name: Event_ExecuteStageTurn
+        m_Value: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
+    - rid: 3934011152537485536
+      type: {class: 'BlackboardVariable`1[[Event_ClearStacksRequest, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 526919694260817617
+          m_Value1: 11283119826685701234
+        Name: Event_ClearStacksRequest
+        m_Value: {fileID: 11400000, guid: a5c217e8d41af6c48944a9532e0cc1df, type: 2}
 --- !u!1 &4395580416635181227
 GameObject:
   m_ObjectHideFlags: 0
