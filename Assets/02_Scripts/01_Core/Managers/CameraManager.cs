@@ -29,6 +29,7 @@ public class CameraManager : MonoBehaviour
     public bool IsBlending { get; private set; } = false;
     public Action<EViewMode> onViewChanged;
     public event Action onCameraHigh;
+    public Transform CameraTrans => _brain.transform;
     #region Life Time
     private void Awake()
     {

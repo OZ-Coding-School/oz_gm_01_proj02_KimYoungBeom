@@ -8,7 +8,7 @@ public class PlayerController : PoolableComponent
     [SerializeField] private float _moveDuration = 0.9f;
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
-    [SerializeField] private float _durationMultiplier = 0.65f;
+    [SerializeField] private float _durationMultiplier = 0.55f;
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
     [SerializeField] private VoidEventCHSO _onStageClear;               //GameManager 구독
@@ -272,6 +272,9 @@ public class PlayerController : PoolableComponent
             case ENodeState.Moving:
                 transform.SetParent(node.transform);
                 _history.Clear();
+                break;
+            case ENodeState.Key:
+                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
                 break;
             default: break;
         }

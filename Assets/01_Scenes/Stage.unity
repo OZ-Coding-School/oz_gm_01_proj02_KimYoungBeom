@@ -1190,6 +1190,7 @@ MonoBehaviour:
   _movingNodePoolData: {fileID: 11400000, guid: 891587e1cbb84ca44b969321c2c359c3, type: 2}
   _playerPoolData: {fileID: 11400000, guid: 4b31d8965f33e8240a660a83ccaa1b9f, type: 2}
   _goalPoolData: {fileID: 11400000, guid: b2804ae65c16e61428735d76090c0b81, type: 2}
+  _keyPoolData: {fileID: 11400000, guid: 8ec384e872f31004fbb1e3f03ab9cf1c, type: 2}
 --- !u!1 &1395623066
 GameObject:
   m_ObjectHideFlags: 0
