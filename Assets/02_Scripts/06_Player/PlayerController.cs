@@ -88,6 +88,7 @@ public class PlayerController : PoolableComponent
         Managers.Camera.onViewChanged += HandleViewChanged;
 
         Managers.Stage.onStageTurnEnd += HandleStageTurnEnd;
+        Managers.Stage.onClearRequest += HandleStageClear;
     }
     private void OnDisable()
     {
@@ -95,6 +96,7 @@ public class PlayerController : PoolableComponent
         Managers.Input.onUnDoEvent -= OnUnDo;
         Managers.Camera.onViewChanged -= HandleViewChanged;
         Managers.Stage.onStageTurnEnd -= HandleStageTurnEnd;
+        Managers.Stage.onClearRequest -= HandleStageClear;
     }
     private void Update()
     {
@@ -135,6 +137,11 @@ public class PlayerController : PoolableComponent
     private void HandleStageTurnEnd()
     {
         transform.SetParent(Managers.Pool.transform);
+    }
+    private void HandleStageClear()
+    {
+        _isLastMove = true;
+        _history.Clear();
     }
     #endregion
 
@@ -274,13 +281,6 @@ public class PlayerController : PoolableComponent
         try
         {
             await Awaitable.WaitForSecondsAsync(_moveDuration * durationMultiplier, destroyCancellationToken);
-
-            if (node.NodeState == ENodeState.Finish)
-            {
-                _isLastMove = true;
-                _history.Clear();
-            }
-
             _onNotifySpecialNode?.Raised(node);
         }
         catch

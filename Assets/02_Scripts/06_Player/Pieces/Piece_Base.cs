@@ -3,7 +3,8 @@ using UnityEngine;
 public abstract class Piece_Base : PoolableComponent
 {
     [SerializeField] protected SpatialNodeEventCHSO _onNotifySpecialNode;
-    [SerializeField] protected ENodeState _state;
+
+    public SpatialNode GroundNode { get; private set; }
 
     public override void OnSpawn()
     {
@@ -13,6 +14,9 @@ public abstract class Piece_Base : PoolableComponent
     {
         _onNotifySpecialNode.onEvent -= HandleNotify;
     }
-
+    public virtual void InjectNode(SpatialNode groundNode)
+    {
+        GroundNode = groundNode;
+    }
     protected abstract void HandleNotify(SpatialNode node);
 }

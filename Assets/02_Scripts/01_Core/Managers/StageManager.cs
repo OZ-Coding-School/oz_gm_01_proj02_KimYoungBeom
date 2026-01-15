@@ -18,8 +18,11 @@ public class StageManager : MonoBehaviour
     public event Action onTurnCountChange;
     public event Action onStageTurnEnd;
     public event Action onGenerateLevel;
+    public event Action onClearRequest;
+    public event Action onGetAllKeys;
     public int CurrentTurnCount { get; private set; }
     public bool IsStageTurn { get; private set; } = false;
+    public int RemainingKeyCount { get; private set; }
 
     #region LifeCycle
     private void OnEnable()
@@ -33,6 +36,7 @@ public class StageManager : MonoBehaviour
     #endregion
 
     #region 외부호출 함수
+    //LevelGenerator 호출
     public void RegisterGenerator(LevelGenerator generator)
     {
         _generator = generator;
@@ -42,11 +46,29 @@ public class StageManager : MonoBehaviour
             RequestGenerate(targetIndex);
         }
     }
+    public void SetNodeMap(SpatialNode node)
+    {
+        var keyForArray3D = CalculateArrayIndex(node.WorldCoordinate);
+        var keyForArray2D = CalculateArrayIndex(node.GridCoordinate);
 
+        _nodeMap3D[keyForArray3D.x, keyForArray3D.y, keyForArray3D.z] = node;
+        _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
+    }
+    public void SetMovableList(IStageMovable movable)
+    {
+        _movableList.Add(movable);
+    }
+    public void AddRemainingKeyCount()
+    {
+        RemainingKeyCount++;
+    }
+    //GameManager 호출 - 재시작
     public void RequestGenerate(int index)
     {
         RequestGenerate(index, true);
     }
+
+    //InputManager 호출(false로)
     public void RequestGenerate(int index, bool doIntro)
     {
         if (_generator == null) return;
@@ -66,6 +88,8 @@ public class StageManager : MonoBehaviour
         onGenerateLevel?.Invoke();
         onTurnCountChange?.Invoke();
     }
+
+    //PlayerController 호출(Command Pattern)
     public bool UseTurn()
     {
         if (CurrentTurnCount == 0)
@@ -77,18 +101,37 @@ public class StageManager : MonoBehaviour
         onTurnCountChange?.Invoke();
         return true;
     }
-    public void SetNodeMap(SpatialNode node)
-    {
-        var keyForArray3D = CalculateArrayIndex(node.WorldCoordinate);
-        var keyForArray2D = CalculateArrayIndex(node.GridCoordinate);
 
-        _nodeMap3D[keyForArray3D.x, keyForArray3D.y, keyForArray3D.z] = node;
-        _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
-    }
-    public void SetMovableList(IStageMovable movable)
+    //MovingNode - Action에서 호출
+    public void UpdateNode(SpatialNode node, Vector3Int from, Vector3Int to)
     {
-        _movableList.Add(movable);
+        node.SetCoordinate(to);
+
+        Vector3Int fromKeyForArray = CalculateArrayIndex(from);
+        Vector3Int toKeyForArray = CalculateArrayIndex(to);
+
+        _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = null;
+        _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
+
+        _nodeMap3D[fromKeyForArray.x, fromKeyForArray.y, fromKeyForArray.z] = null;
+        _nodeMap3D[toKeyForArray.x, toKeyForArray.y, toKeyForArray.z] = node;
     }
+
+    //Pieces 호출
+    public void StageClearRequest()
+    {
+        onClearRequest?.Invoke();
+    }
+    public void GetKeyRequest()
+    {
+        RemainingKeyCount--;
+        if (RemainingKeyCount <= 0)
+        {
+            onGetAllKeys?.Invoke();
+        }
+    }
+
+    // 여러 곳 ~
     public SpatialNode GetNodeAt(Vector3Int key)
     {
         Vector3Int keyForArray = CalculateArrayIndex(key);
@@ -100,20 +143,6 @@ public class StageManager : MonoBehaviour
         var keyForArray = CalculateArrayIndex(key);
         var node = _nodeMap2D[keyForArray.x, keyForArray.y];
         return node;
-    }
-    public void UpdateNode(SpatialNode node, Vector3Int from, Vector3Int to)
-    {
-        node.SetCoordinate(to);
-
-        Vector3Int fromKeyForArray = CalculateArrayIndex(from);
-        Vector3Int toKeyForArray = CalculateArrayIndex(to);
-
-
-        _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = null;
-        _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
-
-        _nodeMap3D[fromKeyForArray.x, fromKeyForArray.y, fromKeyForArray.z] = null;
-        _nodeMap3D[toKeyForArray.x, toKeyForArray.y, toKeyForArray.z] = node;
     }
     #endregion
 
@@ -145,6 +174,7 @@ public class StageManager : MonoBehaviour
 
         StartStageTurn();
     }
+
     #endregion
 
     #region Helper
@@ -153,6 +183,7 @@ public class StageManager : MonoBehaviour
         Array.Clear(_nodeMap2D, 0, _nodeMap2D.Length);
         Array.Clear(_nodeMap3D, 0, _nodeMap3D.Length);
         _movableList.Clear();
+        RemainingKeyCount = 0;
     }
     private Vector3Int CalculateArrayIndex(Vector3Int target)
     {

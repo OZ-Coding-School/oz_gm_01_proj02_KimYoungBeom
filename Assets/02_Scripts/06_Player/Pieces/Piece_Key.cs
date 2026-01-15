@@ -4,12 +4,16 @@ public class Piece_Key : Piece_Base
 {
     public override void ReturnPool()
     {
-        throw new System.NotImplementedException();
+        Managers.Pool.Despawn(poolData, this);
     }
 
     protected override void HandleNotify(SpatialNode node)
     {
-        throw new System.NotImplementedException();
+        if (node != GroundNode) return;
+
+        Managers.Stage.GetKeyRequest();
+
+        ReturnPool();
     }
 
 }
