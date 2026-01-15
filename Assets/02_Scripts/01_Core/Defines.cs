@@ -29,7 +29,7 @@ public enum ENodeShape
 }
 public enum ENodeState
 {
-    None, Start, Finish, Moving
+    None, Start, Finish, Moving, Key
 }
 public enum EViewMode
 {

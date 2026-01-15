@@ -156,7 +156,8 @@ public class StageManager : MonoBehaviour
     }
     private Vector3Int CalculateArrayIndex(Vector3Int target)
     {
-        return new Vector3Int(-target.x, -target.y, target.z);
+        int offsetY = Mathf.FloorToInt(Defines.MAX_NODE_COUNT / 2);
+        return new Vector3Int(-target.x, target.y + offsetY, target.z);
     }
     private Vector2Int CalculateArrayIndex(Vector2Int target)
     {
