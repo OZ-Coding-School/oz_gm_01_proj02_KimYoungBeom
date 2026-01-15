@@ -6,17 +6,21 @@ public class Piece_Goal : Piece_Base
     [SerializeField] private float _rotateHalfDuration = 1.0f;
     [SerializeField] private float _bounceAmplitude = 0.2f;
 
-    private Transform[] _pieces;    //본인 포함 7개 0 ~ 6
+    private MeshRenderer[] _piecesRend;    //본인 포함 7개 0 ~ 6
     private float _rotateSpeed = 15.0f;
     private Tween _tween;
 
     private void Awake()
     {
-        _pieces = GetComponentsInChildren<Transform>();
+        _piecesRend = GetComponentsInChildren<MeshRenderer>();
     }
     public override void OnSpawn()
     {
         base.OnSpawn();
+        foreach (var piece in _piecesRend)
+        {
+            Utils.Log($"{piece.bounds.center}");
+        }
         UpDownIdle();
     }
     public override void OnDespawn()
@@ -31,9 +35,16 @@ public class Piece_Goal : Piece_Base
     {
         RotateToCamera();
     }
-    public void ReturnAction()
+    public void ReturnActionBomb()
     {
-
+        Vector3[] dir = new Vector3[_piecesRend.Length];
+        int index = 0;
+        foreach (var rend in _piecesRend)
+        {
+            dir[index] = rend.GetWorldCenter();
+            rend.gameObject.transform.DOMove(dir[index], 1.0f);
+            index++;
+        }
     }
     public override void ReturnPool()
     {
@@ -48,6 +59,7 @@ public class Piece_Goal : Piece_Base
 
         ReturnPool();
     }
+
 
     private void RotateToCamera()
     {

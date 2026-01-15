@@ -67,7 +67,7 @@ public class LevelGenerator : MonoBehaviour
     {
         if (Managers.Stage.RemainingKeyCount > 0)
         {
-            if (_goal.isActiveAndEnabled) _goal.ReturnPool();
+            if (_goal.isActiveAndEnabled) _goal.ReturnActionBomb();
         }
     }
     private void HandleGetAllKeys()
