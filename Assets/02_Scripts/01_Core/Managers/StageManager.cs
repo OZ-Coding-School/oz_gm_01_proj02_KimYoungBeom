@@ -20,6 +20,7 @@ public class StageManager : MonoBehaviour
     public event Action onGenerateLevel;
     public event Action onClearRequest;
     public event Action onGetAllKeys;
+    public event Action onIntroEnd;
     public int CurrentTurnCount { get; private set; }
     public bool IsStageTurn { get; private set; } = false;
     public int RemainingKeyCount { get; private set; }
@@ -61,6 +62,10 @@ public class StageManager : MonoBehaviour
     public void AddRemainingKeyCount()
     {
         RemainingKeyCount++;
+    }
+    public void IntroEndRequest()
+    {
+        onIntroEnd?.Invoke();
     }
     //GameManager 호출 - 재시작
     public void RequestGenerate(int index)

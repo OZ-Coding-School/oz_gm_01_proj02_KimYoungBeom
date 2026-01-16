@@ -22,13 +22,9 @@ public class LevelGenerator : MonoBehaviour
     }
     private void OnEnable()
     {
-        Managers.Camera.onCameraHigh += OnHideGoal;
-        Managers.Stage.onGetAllKeys += HandleGetAllKeys;
     }
     private void OnDisable()
     {
-        Managers.Camera.onCameraHigh -= OnHideGoal;
-        Managers.Stage.onGetAllKeys -= HandleGetAllKeys;
     }
     public void GenerateLevel(NodeGraphSO nodeGraph)
     {
@@ -63,20 +59,8 @@ public class LevelGenerator : MonoBehaviour
     }
 
     #region 이벤트 핸들러
-    private void OnHideGoal()
-    {
-        if (Managers.Stage.RemainingKeyCount > 0)
-        {
-            if (_goal.isActiveAndEnabled) _goal.ReturnActionBomb();
-        }
-    }
-    private void HandleGetAllKeys()
-    {
-        if (_goal.isActiveAndEnabled) return;
-        SpatialNode goalNode = _goal.GroundNode;
-        _goal = Managers.Pool.Spawn<Piece_Goal>(_goalPoolData, goalNode.WorldCoordinate);
-        _goal.InjectNode(goalNode);
-    }
+
+
     #endregion
 
     #region 헬퍼함수
@@ -136,17 +120,17 @@ public class LevelGenerator : MonoBehaviour
             else
             {
                 _ = ChangeViewAtReloadStage();
-                HideGoalAfterOneSec();
+                IntroEndAfterOneSecAsync();
             }
         }
     }
-    private async void HideGoalAfterOneSec()
+    private async void IntroEndAfterOneSecAsync()
     {
         _currentCts = new CancellationTokenSource();
         try
         {
             await Awaitable.WaitForSecondsAsync(1.0f, _currentCts.Token);
-            OnHideGoal();
+            Managers.Stage.IntroEndRequest();
         }
         catch (OperationCanceledException)
         {
