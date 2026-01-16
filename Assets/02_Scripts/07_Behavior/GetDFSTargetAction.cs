@@ -15,7 +15,7 @@ public partial class GetDFSTargetAction : Action
     [SerializeReference] public BlackboardVariable<Vector3Int> NextTarget;
 
     private static readonly Vector3Int[] _directions = {
-        Vector3Int.forward, Vector3Int.back, Vector3Int.left, Vector3Int.right
+        Vector3Int.forward, Vector3Int.back, Vector3Int.right, Vector3Int.left
     };
 
     protected override Status OnUpdate()

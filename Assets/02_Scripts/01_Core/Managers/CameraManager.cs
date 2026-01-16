@@ -28,6 +28,7 @@ public class CameraManager : MonoBehaviour
 
     public bool IsBlending { get; private set; } = false;
     public Action<EViewMode> onViewChanged;
+    public Transform CameraTrans => _brain.transform;
     #region Life Time
     private void Awake()
     {
@@ -194,6 +195,9 @@ public class CameraManager : MonoBehaviour
                 elapsed += Time.deltaTime;
                 await Awaitable.NextFrameAsync(_introCts.Token);
             }
+
+            Managers.Stage.IntroEndRequest();
+
             Quaternion startRotation = introCam.transform.rotation;
             Quaternion targetRotation = Quaternion.Euler(40.0f, 0.0f, 0.0f);
             elapsed = 0f;
