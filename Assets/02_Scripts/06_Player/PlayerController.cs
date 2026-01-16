@@ -276,7 +276,9 @@ public class PlayerController : PoolableComponent
             case ENodeState.Key:
                 _ = NotifySpecialNodeAsync(node, _durationMultiplier);
                 break;
-            default: break;
+            default:
+                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                break;
         }
     }
     private async Awaitable NotifySpecialNodeAsync(SpatialNode node, float durationMultiplier)

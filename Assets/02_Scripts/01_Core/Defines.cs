@@ -17,6 +17,9 @@ public static class Defines
     public static readonly int SAD_IDLE_HASH = Animator.StringToHash("SadIdle");
     public static readonly int VICTORY_IDLE_HASH = Animator.StringToHash("VictoryIdle");
     public static readonly int JUMP_HASH = Animator.StringToHash("Jump");
+    public static readonly int ATTACK_HASH = Animator.StringToHash("Attack");
+    public static readonly int DEATH_HASH = Animator.StringToHash("Death");
+
     public static readonly int ANIM_SPEED_HASH = Animator.StringToHash("AnimSpeed");
 
     //데이터매니저
@@ -29,7 +32,7 @@ public enum ENodeShape
 }
 public enum ENodeState
 {
-    None, Start, Finish, Moving, Key
+    None, Start, Finish, Moving, Key, OnEnemyUp, OnEnemyDown, OnEnemyLeft, OnEnemyRight, MovingEnemy
 }
 public enum EViewMode
 {

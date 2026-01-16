@@ -9,6 +9,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private PoolableObjSO _playerPoolData;
     [SerializeField] private PoolableObjSO _goalPoolData;
     [SerializeField] private PoolableObjSO _keyPoolData;
+    [SerializeField] private PoolableObjSO _fixedEnemyPoolData;
 
     private SpatialNode _startNode;
     private SpatialNode _finishNode;
@@ -51,8 +52,6 @@ public class LevelGenerator : MonoBehaviour
             Managers.Stage.SetNodeMap(node);
 
             SpawnPieces(node);
-
-            if (node is IStageMovable moveNode) Managers.Stage.SetMovableList(moveNode);
         }
 
         StartStageIntroCameraMove(doIntro);
@@ -77,6 +76,7 @@ public class LevelGenerator : MonoBehaviour
         {
             case ENodeState.Moving:
                 node = Managers.Pool.Spawn<MovingSpatialNode>(_movingNodePoolData, nodeData.worldCoord);
+                CheckAndSetMovableList(node);
                 break;
             default:
                 node = Managers.Pool.Spawn<SpatialNode>(_basicNodePoolData, nodeData.worldCoord);
@@ -103,6 +103,21 @@ public class LevelGenerator : MonoBehaviour
                 var key = Managers.Pool.Spawn<Piece_Key>(_keyPoolData, node.WorldCoordinate);
                 key.InjectNode(node);
                 break;
+            case ENodeState.OnEnemyDown:
+            case ENodeState.OnEnemyUp:
+            case ENodeState.OnEnemyRight:
+            case ENodeState.OnEnemyLeft:
+                var enemy = Managers.Pool.Spawn<Piece_FixedEnemy>(_fixedEnemyPoolData, node.WorldCoordinate);
+                enemy.InjectNode(node);
+                CheckAndSetMovableList(enemy);
+                break;
+        }
+    }
+    private void CheckAndSetMovableList(Component comp)
+    {
+        if (comp is IStageMovable movable)
+        {
+            Managers.Stage.SetMovableList(movable);
         }
     }
     private void StartStageIntroCameraMove(bool doIntro)
