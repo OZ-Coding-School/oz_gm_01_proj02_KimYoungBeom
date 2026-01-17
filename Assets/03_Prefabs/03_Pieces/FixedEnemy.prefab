@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2998598984168034003}
   - component: {fileID: 2967007963088121877}
+  - component: {fileID: -1030844383873523112}
   m_Layer: 0
   m_Name: FixedEnemy
   m_TagString: Untagged
@@ -42,11 +43,60 @@ MonoBehaviour:
   m_GameObject: {fileID: 2064405395818210154}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40840fd573a006d41b9901848f51abf5, type: 3}
+  m_Script: {fileID: 11500000, guid: a13e67225b1d34e48971911d82e5a20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Piece_FixedEnemy
   poolData: {fileID: 0}
   _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}
+  _behaviorAgent: {fileID: -1030844383873523112}
+  _onExecuteStageTurn: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
+--- !u!114 &-1030844383873523112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2064405395818210154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
+  m_Graph: {fileID: -5811450745973406641, guid: 381511bbda3d7ad44ac3d6a543ab96b0, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 3934011213371408831
+  - rid: 3934011213371408832
+  - rid: 3934011213371408833
+  m_OriginalGraph: {fileID: -5811450745973406641, guid: 381511bbda3d7ad44ac3d6a543ab96b0, type: 2}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3934011213371408831
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 2064405395818210154}
+    - rid: 3934011213371408832
+      type: {class: 'BlackboardVariable`1[[Piece_Enemy, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7939514537227901066
+          m_Value1: 2916694393206812506
+        Name: My
+        m_Value: {fileID: 2967007963088121877}
+    - rid: 3934011213371408833
+      type: {class: 'BlackboardVariable`1[[Event_ExecuteStageTurn, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2212585845826970310
+          m_Value1: 4656641574091126417
+        Name: Event_ExecuteStageTurn
+        m_Value: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
 --- !u!1001 &1131755980157509314
 PrefabInstance:
   m_ObjectHideFlags: 0

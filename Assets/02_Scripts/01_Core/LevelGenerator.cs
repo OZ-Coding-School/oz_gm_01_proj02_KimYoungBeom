@@ -107,7 +107,7 @@ public class LevelGenerator : MonoBehaviour
             case ENodeState.OnEnemyUp:
             case ENodeState.OnEnemyRight:
             case ENodeState.OnEnemyLeft:
-                var enemy = Managers.Pool.Spawn<Piece_FixedEnemy>(_fixedEnemyPoolData, node.WorldCoordinate);
+                var enemy = Managers.Pool.Spawn<Piece_Enemy>(_fixedEnemyPoolData, node.WorldCoordinate);
                 enemy.InjectNode(node);
                 CheckAndSetMovableList(enemy);
                 break;
