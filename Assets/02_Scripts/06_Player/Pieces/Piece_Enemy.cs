@@ -1,5 +1,6 @@
 using Unity.Behavior;
 using UnityEngine;
+using DG.Tweening;
 
 public class Piece_Enemy : Piece_Base, IStageMovable
 {
@@ -10,16 +11,15 @@ public class Piece_Enemy : Piece_Base, IStageMovable
 
     public bool IsMovingEnemy { get; private set; } = false;
     public Vector2Int ForwardDir => _forwordDir;
-    public bool CanAttack => _canAttack;
     public SpatialNode NotifyNode => _notifyNode;
     public Animator Anim => _anim;
 
     private Vector2Int _forwordDir;
     private SpatialNode _notifyNode;
 
-    private bool _canAttack = false;
     private bool _isIntroEnd = false;
-
+    private bool _isDeath = false;
+    private Vector3 _deathLookDir;
     private Animator _anim;
 
     private AwaitableCompletionSource _turnCompletionSource;
@@ -32,6 +32,11 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         base.OnSpawn();
         _anim.CrossFadeInFixedTime(Defines.IDLE_HASH, 0.0f);
+        CompleteTurn();
+
+        _isDeath = false;
+        _isIntroEnd = false;
+        _notifyNode = null;
 
         //카메라를 보며 적당한 애니메이션 실행
     }
@@ -39,16 +44,13 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         base.OnDespawn();
         //애니메이션 정리
-
-        _canAttack = false;
-        _isIntroEnd = false;
-        CompleteTurn();
     }
 
     private void FixedUpdate()
     {
         if (!_isIntroEnd) RotateToCamera();
-        else RotateToTarget(transform.position + new Vector3(_forwordDir.x, 0.0f, _forwordDir.y));
+        else if (!_isDeath) RotateToTarget(transform.position + new Vector3(_forwordDir.x, 0.0f, _forwordDir.y));
+        else RotateToTarget(transform.position + _deathLookDir);
     }
     public override void InjectNode(SpatialNode groundNode)
     {
@@ -66,18 +68,10 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     }
     public async Awaitable ExecuteStageTurn()
     {
-        if (_canAttack)
-        {
-            if (_behaviorAgent == null) return;
-
-            _turnCompletionSource = new AwaitableCompletionSource();
-            _onExecuteStageTurn.SendEventMessage();
-            await _turnCompletionSource.Awaitable;
-
-            //공격 로직 or 행동트리 실행
-            //await Awaitable.WaitForSecondsAsync(0.5f);
-        }
-        _canAttack = false;
+        if (_behaviorAgent == null || _isDeath) return;
+        _turnCompletionSource = new AwaitableCompletionSource();
+        _onExecuteStageTurn.SendEventMessage();
+        await _turnCompletionSource.Awaitable;
     }
     public void CompleteTurn()
     {
@@ -87,12 +81,14 @@ public class Piece_Enemy : Piece_Base, IStageMovable
             _turnCompletionSource = null;
         }
     }
-    public void AttackSuccessRequest()
+    public void AttackSuccessRequest(Vector2Int enemyForwardDir, SpatialNode notifyNode)
     {
-        //StageManger의 onAttackSuccess 이벤트 발송
-        Utils.Log("Attack Success Request");
+        Managers.Stage.BroadcastAttackSuccess(enemyForwardDir, notifyNode);
     }
-
+    public void ChangeForwardDir(Vector2Int forwardDir)
+    {
+        _forwordDir = forwardDir;
+    }
     protected override void HandleIntroEnd()
     {
         //정해진 곳으로 회전하며 아이들 전환
@@ -101,16 +97,30 @@ public class Piece_Enemy : Piece_Base, IStageMovable
 
     protected override void HandleNotify(SpatialNode node)
     {
+        SpatialNode prevPlayerNode = _notifyNode;
         _notifyNode = node;
 
         if (node == GroundNode)
         {
             //죽음 애니메이션
-
-            ReturnPool();
+            Vector3Int prevNodePos = prevPlayerNode == null ? Vector3Int.zero : prevPlayerNode.WorldCoordinate;
+            _deathLookDir = prevNodePos - _notifyNode.WorldCoordinate;
+            GroundNode.ChangeNodeState(ENodeState.None);
+            ReturnPoolAfterAnimation(_deathLookDir);
         }
     }
-
+    private void ReturnPoolAfterAnimation(Vector3 deathLookDir)
+    {
+        _isDeath = true;
+        _anim.CrossFadeInFixedTime(Defines.DEATH_HASH, 0.1f);
+        Vector3 movePos = GroundNode.WorldCoordinate - _deathLookDir;
+        transform.DOMove(movePos, 0.5f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+            {
+                ReturnPool();
+            });
+    }
     private void InitAttackDirection(ENodeState state)
     {
         switch (state)

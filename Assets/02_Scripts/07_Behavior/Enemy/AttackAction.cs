@@ -23,6 +23,7 @@ public partial class AttackAction : Action
         _anim = My.Value.Anim;
         _targetPos = _groundNode.WorldCoordinate + ((Vector3)(_notifyNode.WorldCoordinate - _groundNode.WorldCoordinate) / 2.0f);
         return Status.Running;
+
     }
 
     protected override Status OnUpdate()
@@ -34,7 +35,7 @@ public partial class AttackAction : Action
             .SetEase(Ease.OutQuad));
         attackSeq.AppendCallback(() =>
         {
-            My.Value.AttackSuccessRequest();
+            My.Value.AttackSuccessRequest(My.Value.ForwardDir, _notifyNode);
             My.Value.CompleteTurn();
         });
         attackSeq.AppendInterval(Duration.Value * 0.5f);

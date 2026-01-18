@@ -28,7 +28,7 @@ public static class Defines
 }
 public enum ENodeShape
 {
-    Cross, Horizontal, Vertical, UpRight, UpLeft, DownRight, DownLeft, TUp, TDown, TRight, TLeft
+    Cross, Horizontal, Vertical, UpRight, UpLeft, DownRight, DownLeft, TUp, TDown, TRight, TLeft, None
 }
 public enum ENodeState
 {

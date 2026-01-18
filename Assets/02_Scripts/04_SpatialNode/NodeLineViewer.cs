@@ -88,7 +88,6 @@ public class NodeLineViewer : MonoBehaviour
                 points.AddRange(new[] { up, center, down, center, right });
                 break;
         }
-
         _lineRenderer.positionCount = points.Count;
         _lineRenderer.SetPositions(points.ToArray());
     }

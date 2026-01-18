@@ -72,7 +72,7 @@ public class NodeGraphBaker : EditorWindow
             ENodeShape.TDown => new() { Vector2Int.up, Vector2Int.left, Vector2Int.right },
             ENodeShape.TRight => new() { Vector2Int.up, Vector2Int.down, Vector2Int.left },
             ENodeShape.TLeft => new() { Vector2Int.up, Vector2Int.down, Vector2Int.right },
-            _ => new()
+            _ => new() { Vector2Int.zero }
         };
     }
 }

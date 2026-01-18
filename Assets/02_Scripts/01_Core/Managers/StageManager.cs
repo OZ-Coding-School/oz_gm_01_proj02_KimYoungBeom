@@ -21,6 +21,7 @@ public class StageManager : MonoBehaviour
     public event Action onClearRequest;
     public event Action onGetAllKeys;
     public event Action onIntroEnd;
+    public event Action<Vector2Int, SpatialNode> onAttackSuccess;
     public int CurrentTurnCount { get; private set; }
     public bool IsStageTurn { get; private set; } = false;
     public int RemainingKeyCount { get; private set; }
@@ -53,7 +54,17 @@ public class StageManager : MonoBehaviour
         var keyForArray2D = CalculateArrayIndex(node.GridCoordinate);
 
         _nodeMap3D[keyForArray3D.x, keyForArray3D.y, keyForArray3D.z] = node;
-        _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
+        if (_nodeMap2D[keyForArray2D.x, keyForArray2D.y] != null)
+        {
+            if (_nodeMap2D[keyForArray2D.x, keyForArray2D.y].WorldCoordinate.y < node.WorldCoordinate.y)
+            {
+                _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
+            }
+        }
+        else
+        {
+            _nodeMap2D[keyForArray2D.x, keyForArray2D.y] = node;
+        }
     }
     public void SetMovableList(IStageMovable movable)
     {
@@ -115,11 +126,33 @@ public class StageManager : MonoBehaviour
         Vector3Int fromKeyForArray = CalculateArrayIndex(from);
         Vector3Int toKeyForArray = CalculateArrayIndex(to);
 
-        _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = null;
-        _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
-
         _nodeMap3D[fromKeyForArray.x, fromKeyForArray.y, fromKeyForArray.z] = null;
         _nodeMap3D[toKeyForArray.x, toKeyForArray.y, toKeyForArray.z] = node;
+
+        if (_nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] == node)
+        {
+            _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = null;
+            for (int i = Defines.MAX_NODE_COUNT - 1; i >= 0; i--)
+            {
+                if (_nodeMap3D[fromKeyForArray.x, i, fromKeyForArray.z] != null)
+                {
+                    _nodeMap2D[fromKeyForArray.x, fromKeyForArray.z] = _nodeMap3D[fromKeyForArray.x, i, fromKeyForArray.z];
+                    break;
+                }
+            }
+        }
+        if (_nodeMap2D[toKeyForArray.x, toKeyForArray.z] != null)
+        {
+            if (_nodeMap2D[toKeyForArray.x, toKeyForArray.z].WorldCoordinate.y < node.WorldCoordinate.y)
+            {
+                _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
+            }
+        }
+        else
+        {
+            _nodeMap2D[toKeyForArray.x, toKeyForArray.z] = node;
+        }
+
     }
 
     //Pieces 호출
@@ -135,7 +168,10 @@ public class StageManager : MonoBehaviour
             onGetAllKeys?.Invoke();
         }
     }
-
+    public void BroadcastAttackSuccess(Vector2Int enemyForward, SpatialNode notifyNode)
+    {
+        onAttackSuccess?.Invoke(enemyForward, notifyNode);
+    }
     // 여러 곳 ~
     public SpatialNode GetNodeAt(Vector3Int key)
     {

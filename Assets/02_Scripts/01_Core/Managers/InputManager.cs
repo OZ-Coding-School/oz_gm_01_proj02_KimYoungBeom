@@ -15,6 +15,8 @@ public class InputManager : MonoBehaviour
 
     private InputSystem_Actions _inputActions;
 
+    public bool IsPlayerDeath { get; set; }
+
     private void Awake()
     {
         _inputActions = new InputSystem_Actions();
@@ -62,18 +64,22 @@ public class InputManager : MonoBehaviour
     }
     public void ExecuteUnDo()
     {
+        if (IsPlayerDeath) return;
         onUnDoEvent?.Invoke();
     }
     public void ExecuteTopView()
     {
+        if (IsPlayerDeath) return;
         onTopViewEvent?.Invoke();
     }
     public void ExecuteFirstView()
     {
+        if (IsPlayerDeath) return;
         onFirstViewEvent?.Invoke();
     }
     public void ExecuteQuarterView()
     {
+        if (IsPlayerDeath) return;
         onQuarterViewEvent?.Invoke();
     }
     private void OnQuarterView(InputAction.CallbackContext context)
@@ -97,10 +103,12 @@ public class InputManager : MonoBehaviour
     }
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
+        if (IsPlayerDeath) return;
         onMoveEvent?.Invoke(context.ReadValue<Vector2>());
     }
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
+        if (IsPlayerDeath) return;
         onMoveEvent?.Invoke(Vector2.zero);
     }
     private void OnUnDoPerformed(InputAction.CallbackContext context)

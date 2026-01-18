@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PlayerController : PoolableComponent
 {
@@ -8,7 +9,8 @@ public class PlayerController : PoolableComponent
     [SerializeField] private float _moveDuration = 0.9f;
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
-    [SerializeField] private float _durationMultiplier = 0.55f;
+    [SerializeField] private float _durationMultiplier = 0.4f;
+    [SerializeField] private float _enemyDurationMultiplier = 0.3f;
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
     [SerializeField] private VoidEventCHSO _onStageClear;               //GameManager 구독
@@ -27,6 +29,7 @@ public class PlayerController : PoolableComponent
     private GoToState _goToState;
     private GoFromState _goFromState;
     private FinishState _finishState;
+    private DeathState _deathState;
     #endregion
 
     #region private 멤버
@@ -41,7 +44,9 @@ public class PlayerController : PoolableComponent
     private Vector2Int _rotateDir = new Vector2Int();
     private bool _isRotate = false;
     private bool _isLastMove = false;
+    private bool _isDeath = false;
     private EViewMode _currentView = EViewMode.Quarter;
+
 
     #endregion
 
@@ -53,6 +58,7 @@ public class PlayerController : PoolableComponent
     public bool IsMoving { get; set; } = false;
     public bool IsGoTo { get; set; } = false;
     public bool IsGoFrom { get; set; } = false;
+    public Vector2Int EnemyForwardDir { get; private set; }
     public Animator Anim => _anim;
     public float SadIdleCool => _sadIdleCool;
     public VoidEventCHSO OnStageClear => _onStageClear;
@@ -76,6 +82,7 @@ public class PlayerController : PoolableComponent
         _goToState = new GoToState(this, _moveState);
         _goFromState = new GoFromState(this, _moveState);
         _finishState = new FinishState(this);
+        _deathState = new DeathState(this);
 
         InitTransitions();
 
@@ -89,6 +96,7 @@ public class PlayerController : PoolableComponent
 
         Managers.Stage.onStageTurnEnd += HandleStageTurnEnd;
         Managers.Stage.onClearRequest += HandleStageClear;
+        Managers.Stage.onAttackSuccess += HandleAttackSuccess;
     }
     private void OnDisable()
     {
@@ -97,6 +105,7 @@ public class PlayerController : PoolableComponent
         Managers.Camera.onViewChanged -= HandleViewChanged;
         Managers.Stage.onStageTurnEnd -= HandleStageTurnEnd;
         Managers.Stage.onClearRequest -= HandleStageClear;
+        Managers.Stage.onAttackSuccess -= HandleAttackSuccess;
     }
     private void Update()
     {
@@ -143,11 +152,21 @@ public class PlayerController : PoolableComponent
         _isLastMove = true;
         _history.Clear();
     }
+    private void HandleAttackSuccess(Vector2Int enemyDir, SpatialNode notifyNode)
+    {
+        if (notifyNode != CurrentNode) return;
+
+        EnemyForwardDir = enemyDir;
+        _isDeath = true;
+        Managers.Input.IsPlayerDeath = true;
+    }
     #endregion
 
     #region 상태 전환조건 모음
     private void InitTransitions()
     {
+        _stateMC.AddAnyTransition(_deathState, () => _isDeath && !_stateMC.IsCurrentState(_deathState));
+
         //From Idle
         _stateMC.AddTransition(_idleState, _finishState, () => _isLastMove);
         _stateMC.AddTransition(_idleState, _moveState, () => IsMoving);
@@ -162,7 +181,7 @@ public class PlayerController : PoolableComponent
     #region 커맨드패턴
     public void OnMove(Vector2 input)
     {
-        if (Managers.Stage.IsStageTurn) return;
+        if (Managers.Stage.IsStageTurn || _isDeath) return;
         if (IsMoving || CurrentNode == null) return;
 
         Vector2Int dir = GetDiscreteDirection(input);
@@ -176,7 +195,7 @@ public class PlayerController : PoolableComponent
 
     public void OnUnDo()
     {
-        if (Managers.Stage.IsStageTurn) return;
+        if (Managers.Stage.IsStageTurn || _isDeath) return;
         if (IsMoving || _history.Count == 0) return;
         if (Managers.Camera.IsBlending) return;
         if (_currentView == EViewMode.FirstPerson) return;
@@ -227,7 +246,7 @@ public class PlayerController : PoolableComponent
     }
     private void ExecuteCommand(SpatialNode targetNode, Vector2Int dir)
     {
-        if (!CheckTargetNodeDir(targetNode, dir)) return;
+        if (!CheckTargetNodeToMove(targetNode, dir)) return;
 
         if (Managers.Stage.UseTurn())
         {
@@ -242,15 +261,39 @@ public class PlayerController : PoolableComponent
             NotifySpecialNode(targetNode);
         }
     }
-    private bool CheckTargetNodeDir(SpatialNode target, Vector2Int dir)
+    private bool CheckTargetNodeToMove(SpatialNode target, Vector2Int dir)
     {
         if (target == null) return false;
         if (!target.MoveableDirections.Contains(-dir)) return false;
+        if (GetTargetNodeEnemyForward(target) == -dir) return false;
         return true;
     }
     #endregion
 
     #region Helper 함수
+    private Vector2Int GetTargetNodeEnemyForward(SpatialNode targetNode)
+    {
+        Vector2Int enemyForward;
+        switch (targetNode.NodeState)
+        {
+            case ENodeState.OnEnemyUp:
+                enemyForward = Vector2Int.up;
+                break;
+            case ENodeState.OnEnemyDown:
+                enemyForward = Vector2Int.down;
+                break;
+            case ENodeState.OnEnemyLeft:
+                enemyForward = Vector2Int.left;
+                break;
+            case ENodeState.OnEnemyRight:
+                enemyForward = Vector2Int.right;
+                break;
+            default:
+                enemyForward = Vector2Int.zero;
+                break;
+        }
+        return enemyForward;
+    }
     private void InitClipLength(RuntimeAnimatorController controller)
     {
         foreach (var clip in controller.animationClips)
@@ -275,6 +318,12 @@ public class PlayerController : PoolableComponent
                 break;
             case ENodeState.Key:
                 _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                break;
+            case ENodeState.OnEnemyDown:
+            case ENodeState.OnEnemyLeft:
+            case ENodeState.OnEnemyRight:
+            case ENodeState.OnEnemyUp:
+                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 break;
             default:
                 _ = NotifySpecialNodeAsync(node, _durationMultiplier);
@@ -332,13 +381,15 @@ public class PlayerController : PoolableComponent
     }
     private void InitAtDespawn()
     {
-        //transform.SetParent(Managers.Pool.transform);
         DG.Tweening.DOTween.KillAll();
         IsMoving = false;
         IsGoTo = false;
         IsGoFrom = false;
         _isRotate = false;
         _isLastMove = false;
+        _isDeath = false;
+        Managers.Input.IsPlayerDeath = false;
+
         if (_anim != null)
         {
             _anim.Rebind();
