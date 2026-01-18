@@ -6,9 +6,7 @@ public class Piece_Goal : Piece_Base
     private MeshRenderer[] _piecesRends;
     private Vector3[] _piecesOriginLocalPos;
 
-    private float _rotateSpeed = 15.0f;
     private float _bombMoveRange = 0.1f;
-
     private bool _isSpread = false;
 
     private void Awake()
@@ -45,10 +43,6 @@ public class Piece_Goal : Piece_Base
     private void FixedUpdate()
     {
         if (!_isSpread) RotateToCamera();
-    }
-    public override void ReturnPool()
-    {
-        Managers.Pool.Despawn(poolData, this);
     }
 
     //이벤트 핸들러
@@ -113,27 +107,7 @@ public class Piece_Goal : Piece_Base
             _piecesRends[i].transform.localPosition = _piecesOriginLocalPos[i];
         }
     }
-    private void RotateToCamera()
-    {
-        Vector3 camPos = Managers.Camera.CameraTrans.position;
-        Vector3 targetDir = camPos - transform.position;
-        targetDir.y = 0.0f;
 
-        if ((targetDir - transform.position).sqrMagnitude < 0.01f) return;
-
-        Quaternion lookQtrn = Quaternion.LookRotation(targetDir, Vector3.up);
-
-        float angleDiff = Quaternion.Angle(transform.rotation, lookQtrn);
-
-        if (angleDiff < 0.5f)
-        {
-            transform.rotation = lookQtrn;
-        }
-        else
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookQtrn, Time.fixedDeltaTime * _rotateSpeed);
-        }
-    }
     private void UpDownIdle()
     {
         _upDownTween?.Kill();
@@ -143,4 +117,8 @@ public class Piece_Goal : Piece_Base
             .SetRelative();
     }
 
+    public override void ReturnPool()
+    {
+        Managers.Pool.Despawn(poolData, this);
+    }
 }

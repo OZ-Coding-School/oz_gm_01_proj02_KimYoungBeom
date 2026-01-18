@@ -9,10 +9,7 @@ public class Piece_Key : Piece_Base
         _bounceAmplitude = 0.1f;
         _rotateHalfDuration = 1.2f;
     }
-    public override void ReturnPool()
-    {
-        Managers.Pool.Despawn(poolData, this);
-    }
+
     public override void OnSpawn()
     {
         base.OnSpawn();
@@ -42,5 +39,10 @@ public class Piece_Key : Piece_Base
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo)
             .SetRelative();
+    }
+
+    public override void ReturnPool()
+    {
+        Managers.Pool.Despawn(poolData, this);
     }
 }

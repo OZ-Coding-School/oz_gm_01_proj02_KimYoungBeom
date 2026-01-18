@@ -27,8 +27,11 @@ public class CameraManager : MonoBehaviour
     private float _currentSensitivity;
 
     public bool IsBlending { get; private set; } = false;
-    public Action<EViewMode> onViewChanged;
+    public EViewMode CurrentViewMode => _currentViewMode;
     public Transform CameraTrans => _brain.transform;
+
+
+    public Action<EViewMode> onViewChanged;
     #region Life Time
     private void Awake()
     {

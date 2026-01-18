@@ -60,6 +60,19 @@ public class SpatialNode : PoolableComponent, INode
         WorldCoordinate = worldCoordinate;
         GridCoordinate = new Vector2Int(worldCoordinate.x, worldCoordinate.z);
     }
+    public void ChangeNodeState(ENodeState changedState)
+    {
+        if (!CheckChangeState()) return;
+        _nodeState = changedState;
+    }
+    public bool CheckChangeState()
+    {
+        if (NodeState == ENodeState.Key || NodeState == ENodeState.Finish || NodeState == ENodeState.Moving)
+        {
+            return false;
+        }
+        return true;
+    }
     protected void ResetVisuals()
     {
         if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
@@ -81,6 +94,8 @@ public class SpatialNode : PoolableComponent, INode
             yield return null;
         }
     }
+
+
 
     public override void ReturnPool()
     {
