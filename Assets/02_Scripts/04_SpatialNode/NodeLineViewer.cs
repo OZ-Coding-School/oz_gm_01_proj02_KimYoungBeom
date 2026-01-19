@@ -10,6 +10,7 @@ public class NodeLineViewer : MonoBehaviour
     [SerializeField] private LineRenderer _lineRenderer;
 
     [Header("Visual Settings")]
+    [ColorUsage(true, true)]
     public Color visualColor = Color.cyan;
     [Range(0.05f, 0.45f)] public float circleRadius = 0.1f;
     [Range(0.01f, 0.2f)] public float lineWidth = 0.05f;

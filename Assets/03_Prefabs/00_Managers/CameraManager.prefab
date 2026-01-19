@@ -415,8 +415,8 @@ MonoBehaviour:
   Lens:
     FieldOfView: 2
     OrthographicSize: 2.61825
-    NearClipPlane: 0.1
-    FarClipPlane: 5000
+    NearClipPlane: 125
+    FarClipPlane: 175
     Dutch: 0
     ModeOverride: 1
     PhysicalProperties:
@@ -554,7 +554,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6220059681871243068}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -594,9 +594,9 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 70
+  field of view: 2
   orthographic: 0
-  orthographic size: 10
+  orthographic size: 2.5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

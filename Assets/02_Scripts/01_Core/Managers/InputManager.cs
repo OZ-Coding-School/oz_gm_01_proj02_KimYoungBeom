@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
@@ -69,17 +68,17 @@ public class InputManager : MonoBehaviour
     }
     public void ExecuteTopView()
     {
-        if (IsPlayerDeath) return;
+        if (IsPlayerDeath || Managers.Stage.IsStageTurn) return;
         onTopViewEvent?.Invoke();
     }
     public void ExecuteFirstView()
     {
-        if (IsPlayerDeath) return;
+        if (IsPlayerDeath || Managers.Stage.IsStageTurn) return;
         onFirstViewEvent?.Invoke();
     }
     public void ExecuteQuarterView()
     {
-        if (IsPlayerDeath) return;
+        if (IsPlayerDeath || Managers.Stage.IsStageTurn) return;
         onQuarterViewEvent?.Invoke();
     }
     private void OnQuarterView(InputAction.CallbackContext context)
