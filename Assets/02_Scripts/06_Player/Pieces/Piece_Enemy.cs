@@ -10,6 +10,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     public Vector2Int ForwardDir => _forwordDir;
     public SpatialNode NotifyNode => _notifyNode;
     public Animator Anim => _anim;
+    public bool IsDeath => _isDeath;
 
     private Vector2Int _forwordDir;
     private SpatialNode _notifyNode;
@@ -40,6 +41,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     public override void OnDespawn()
     {
         base.OnDespawn();
+        transform.DOKill();
         //애니메이션 정리
     }
 
@@ -60,7 +62,6 @@ public class Piece_Enemy : Piece_Base, IStageMovable
         }
         else
         {
-
             IsMovingEnemy = false;
         }
     }
@@ -86,6 +87,8 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         _forwordDir = forwardDir;
     }
+
+
     protected override void HandleIntroEnd()
     {
         //정해진 곳으로 회전하며 아이들 전환

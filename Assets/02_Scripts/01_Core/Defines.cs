@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class Defines
@@ -26,6 +27,7 @@ public static class Defines
     //데이터매니저
     public static readonly int CAM_SENS_MAX = 5;
     public static readonly int CAM_SENS_MIN = 1;
+
 }
 public enum ENodeShape
 {

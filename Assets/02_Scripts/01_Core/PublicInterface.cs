@@ -20,7 +20,7 @@ public interface INode
 {
     Vector3Int WorldCoordinate { get; }
     Vector2Int GridCoordinate { get; }
-    List<Vector2Int> MoveableDirections { get; }
+    List<Vector2Int> MovableDirections { get; }
     Action OnStateChanged { get; set; }
 }
 

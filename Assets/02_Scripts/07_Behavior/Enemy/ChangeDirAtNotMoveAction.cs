@@ -5,8 +5,8 @@ using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "ChangeDirection", story: "Change FWD Dir to Move [My]", category: "Action", id: "e51598b9b0a2e3c65129f33c14be9764")]
-public partial class ChangeDirectionAction : Action
+[NodeDescription(name: "ChangeDirAtNotMove", story: "Change Direction after Not Moving [My]", category: "Action", id: "59ca810a4aaee186b80f9fc3ef5636ed")]
+public partial class ChangeDirAtNotMoveAction : Action
 {
     [SerializeReference] public BlackboardVariable<Piece_Enemy> My;
 
@@ -18,7 +18,6 @@ public partial class ChangeDirectionAction : Action
         _groundNode = My.Value.GroundNode;
         _forwardDir = My.Value.ForwardDir;
         _movablDir = _groundNode.GetTrailDirection();
-
         return Status.Running;
     }
 
@@ -31,26 +30,19 @@ public partial class ChangeDirectionAction : Action
     protected override void OnEnd()
     {
     }
+
     private void ChangeDirection()
     {
         if (_movablDir.Length < 2) return;
-        if (_movablDir[1] == Vector2Int.zero)
+        if (_movablDir[1] == Vector2Int.zero) return;
+        foreach (var move in _movablDir)
         {
-            if (_movablDir[0] != _forwardDir && _movablDir[0] != Vector2Int.zero)
+            if (move != _forwardDir)
             {
-                My.Value.ChangeForwardDir(_movablDir[0]);
-            }
-        }
-        else
-        {
-            foreach (var move in _movablDir)
-            {
-                if (move != -_forwardDir)
-                {
-                    My.Value.ChangeForwardDir(move);
-                    break;
-                }
+                My.Value.ChangeForwardDir(move);
+                break;
             }
         }
     }
 }
+

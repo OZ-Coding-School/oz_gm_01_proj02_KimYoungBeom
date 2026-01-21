@@ -34,7 +34,7 @@ public abstract class Piece_Base : PoolableComponent
         Vector3 targetDir = targetPos - transform.position;
         targetDir.y = 0.0f;
 
-        if ((targetDir - transform.position).sqrMagnitude < 0.01f) return;
+        if (targetDir.sqrMagnitude < 0.01f) return;
 
         Quaternion lookQtrn = Quaternion.LookRotation(targetDir, Vector3.up);
 
@@ -53,6 +53,12 @@ public abstract class Piece_Base : PoolableComponent
     {
         Vector3 camPos = Managers.Camera.CameraTrans.position;
         RotateToTarget(camPos);
+    }
+
+    public void ChangeGroundNode(SpatialNode node)
+    {
+        if (node == null) return;
+        GroundNode = node;
     }
 
 

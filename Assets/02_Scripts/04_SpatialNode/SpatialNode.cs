@@ -24,12 +24,15 @@ public class SpatialNode : PoolableComponent, INode
     public Vector3Int WorldCoordinate { get; private set; }
 
     public Vector2Int GridCoordinate { get; private set; }
-    public List<Vector2Int> MoveableDirections => _data.allowedDirs;
+    public List<Vector2Int> MovableDirections => _data.allowedDirs;
     public ENodeShape NodeShape => _nodeShape;
     public ENodeState NodeState => _nodeState;
     public ENodeTrail NodeTrail => _nodeTrail;
     public Action OnStateChanged { get; set; }
     public event Action OnUpdateVisuals;
+
+    private readonly Vector2Int[] _trailDir = new Vector2Int[2];
+
     public void InjectData(NodeData data)
     {
         _data = data;
@@ -39,6 +42,8 @@ public class SpatialNode : PoolableComponent, INode
         _nodeTrail = _data.nodeTrail;
         OnStateChanged?.Invoke();
         OnUpdateVisuals?.Invoke();
+
+        MakeTrailDirection();
     }
 
     public override void OnSpawn()
@@ -69,13 +74,17 @@ public class SpatialNode : PoolableComponent, INode
         if (!CheckChangeState()) return;
         _nodeState = changedState;
     }
-    public bool CheckChangeState()
+    private bool CheckChangeState()
     {
         if (NodeState == ENodeState.Key || NodeState == ENodeState.Finish || NodeState == ENodeState.Moving)
         {
             return false;
         }
         return true;
+    }
+    public Vector2Int[] GetTrailDirection()
+    {
+        return _trailDir;
     }
     protected void ResetVisuals()
     {
@@ -100,7 +109,52 @@ public class SpatialNode : PoolableComponent, INode
     }
 
 
-
+    private void MakeTrailDirection()
+    {
+        Array.Clear(_trailDir, 0, _trailDir.Length);
+        switch (NodeTrail)
+        {
+            case ENodeTrail.Vertical:
+                _trailDir[0] = Vector2Int.up;
+                _trailDir[1] = Vector2Int.down;
+                break;
+            case ENodeTrail.Horizontal:
+                _trailDir[0] = Vector2Int.left;
+                _trailDir[1] = Vector2Int.right;
+                break;
+            case ENodeTrail.UpRight:
+                _trailDir[0] = Vector2Int.up;
+                _trailDir[1] = Vector2Int.right;
+                break;
+            case ENodeTrail.UpLeft:
+                _trailDir[0] = Vector2Int.up;
+                _trailDir[1] = Vector2Int.left;
+                break;
+            case ENodeTrail.DownLeft:
+                _trailDir[0] = Vector2Int.down;
+                _trailDir[1] = Vector2Int.left;
+                break;
+            case ENodeTrail.DownRight:
+                _trailDir[0] = Vector2Int.down;
+                _trailDir[1] = Vector2Int.right;
+                break;
+            case ENodeTrail.Up:
+                _trailDir[0] = Vector2Int.up;
+                break;
+            case ENodeTrail.Down:
+                _trailDir[0] = Vector2Int.down;
+                break;
+            case ENodeTrail.Left:
+                _trailDir[0] = Vector2Int.left;
+                break;
+            case ENodeTrail.Right:
+                _trailDir[0] = Vector2Int.right;
+                break;
+            default:
+                _trailDir[0] = Vector2Int.zero;
+                break;
+        }
+    }
     public override void ReturnPool()
     {
         Managers.Pool.Despawn(poolData, this);

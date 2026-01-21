@@ -180,12 +180,14 @@ public class StageManager : MonoBehaviour
     public SpatialNode GetNodeAt(Vector3Int key)
     {
         Vector3Int keyForArray = CalculateArrayIndex(key);
+        if (keyForArray.x < 0 || keyForArray.z < 0 || keyForArray.y < 0) return null;
         var node = _nodeMap3D[keyForArray.x, keyForArray.y, keyForArray.z];
         return node;
     }
     public SpatialNode GetNodeAt(Vector2Int key)
     {
         var keyForArray = CalculateArrayIndex(key);
+        if (keyForArray.x < 0 || keyForArray.y < 0) return null;
         var node = _nodeMap2D[keyForArray.x, keyForArray.y];
         return node;
     }

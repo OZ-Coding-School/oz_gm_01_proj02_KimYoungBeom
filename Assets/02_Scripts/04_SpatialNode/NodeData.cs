@@ -13,6 +13,6 @@ public class NodeData : INode
     public ENodeTrail nodeTrail;
     public Vector3Int WorldCoordinate => worldCoord;
     public Vector2Int GridCoordinate => gridCoord;
-    public List<Vector2Int> MoveableDirections => allowedDirs;
+    public List<Vector2Int> MovableDirections => allowedDirs;
     public Action OnStateChanged { get; set; }
 }
