@@ -10,6 +10,7 @@ public class NodeData : INode
     public List<Vector2Int> allowedDirs;
     public ENodeShape nodeShape;
     public ENodeState nodeState;
+    public ENodeTrail nodeTrail;
     public Vector3Int WorldCoordinate => worldCoord;
     public Vector2Int GridCoordinate => gridCoord;
     public List<Vector2Int> MoveableDirections => allowedDirs;

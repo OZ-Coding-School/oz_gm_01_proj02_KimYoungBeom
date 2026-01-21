@@ -52,3 +52,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b3f0a39c2ee847941801f975a6d6c649, type: 2}
   - {fileID: 11400000, guid: 772113f0a21a9d14f80f9685ac5c7acd, type: 2}
   _onPlayerTurnEnd: {fileID: 11400000, guid: 851c46520da9a4648af6765ddf15acad, type: 2}
+  _onExecuteStageTurn: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
+  _onClearStacksRequest: {fileID: 11400000, guid: a5c217e8d41af6c48944a9532e0cc1df, type: 2}

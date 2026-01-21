@@ -8,10 +8,13 @@ public class NodeLineViewer : MonoBehaviour
     [SerializeField] private SpatialNode _spatialNode;
     [SerializeField] private Transform _circleTransform;
     [SerializeField] private LineRenderer _lineRenderer;
+    [SerializeField] private LineRenderer _trailLineRenderer;
 
     [Header("Visual Settings")]
     [ColorUsage(true, true)]
     public Color visualColor = Color.cyan;
+    [ColorUsage(true, true)]
+    public Color trailColor;
     [Range(0.05f, 0.45f)] public float circleRadius = 0.1f;
     [Range(0.01f, 0.2f)] public float lineWidth = 0.05f;
 
@@ -31,20 +34,27 @@ public class NodeLineViewer : MonoBehaviour
         float finalScale = circleRadius * 2f;
         _circleTransform.localScale = new Vector3(finalScale, finalScale, 1f);
 
-        UpdateLines(_spatialNode.NodeShape);
-    }
-
-    private void UpdateLines(ENodeShape shape)
-    {
         _lineRenderer.useWorldSpace = false;
         _lineRenderer.alignment = LineAlignment.TransformZ;
-
         _lineRenderer.startWidth = lineWidth;
         _lineRenderer.endWidth = lineWidth;
         _lineRenderer.startColor = visualColor;
         _lineRenderer.endColor = visualColor;
 
+        _trailLineRenderer.useWorldSpace = false;
+        _trailLineRenderer.alignment = LineAlignment.TransformZ;
+        _trailLineRenderer.startWidth = lineWidth;
+        _trailLineRenderer.endWidth = lineWidth;
+        _trailLineRenderer.startColor = trailColor;
+        _trailLineRenderer.endColor = trailColor;
+
+        UpdateLines(_spatialNode);
+    }
+
+    private void UpdateLines(SpatialNode node)
+    {
         List<Vector3> points = new List<Vector3>();
+        List<Vector3> trailPoints = new List<Vector3>();
         float half = 0.5f;
 
         Vector3 center = Vector3.zero;
@@ -53,7 +63,7 @@ public class NodeLineViewer : MonoBehaviour
         Vector3 left = new Vector3(-half, 0, 0);
         Vector3 right = new Vector3(half, 0, 0);
 
-        switch (shape)
+        switch (node.NodeShape)
         {
             case ENodeShape.Cross:
                 points.AddRange(new[] { up, center, down, center, left, center, right });
@@ -89,7 +99,43 @@ public class NodeLineViewer : MonoBehaviour
                 points.AddRange(new[] { up, center, down, center, right });
                 break;
         }
+        switch (node.NodeTrail)
+        {
+            case ENodeTrail.UpLeft:
+                trailPoints.AddRange(new[] { up, center, left });
+                break;
+            case ENodeTrail.UpRight:
+                trailPoints.AddRange(new[] { up, center, right });
+                break;
+            case ENodeTrail.DownRight:
+                trailPoints.AddRange(new[] { down, center, right });
+                break;
+            case ENodeTrail.DownLeft:
+                trailPoints.AddRange(new[] { down, center, left });
+                break;
+            case ENodeTrail.Vertical:
+                trailPoints.AddRange(new[] { up, down });
+                break;
+            case ENodeTrail.Horizontal:
+                trailPoints.AddRange(new[] { left, right });
+                break;
+            case ENodeTrail.Up:
+                trailPoints.AddRange(new[] { center, up });
+                break;
+            case ENodeTrail.Down:
+                trailPoints.AddRange(new[] { center, down });
+                break;
+            case ENodeTrail.Left:
+                trailPoints.AddRange(new[] { center, left });
+                break;
+            case ENodeTrail.Right:
+                trailPoints.AddRange(new[] { center, right });
+                break;
+        }
         _lineRenderer.positionCount = points.Count;
         _lineRenderer.SetPositions(points.ToArray());
+
+        _trailLineRenderer.positionCount = trailPoints.Count;
+        _trailLineRenderer.SetPositions(trailPoints.ToArray());
     }
 }

@@ -6,9 +6,6 @@ public class Piece_Enemy : Piece_Base, IStageMovable
 {
     [SerializeField] private BehaviorGraphAgent _behaviorAgent;
 
-    [Header("BT용 이벤트 구독")]
-    [SerializeField] private Event_ExecuteStageTurn _onExecuteStageTurn;
-
     public bool IsMovingEnemy { get; private set; } = false;
     public Vector2Int ForwardDir => _forwordDir;
     public SpatialNode NotifyNode => _notifyNode;
@@ -63,6 +60,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
         }
         else
         {
+
             IsMovingEnemy = false;
         }
     }
@@ -70,7 +68,6 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         if (_behaviorAgent == null || _isDeath) return;
         _turnCompletionSource = new AwaitableCompletionSource();
-        _onExecuteStageTurn.SendEventMessage();
         await _turnCompletionSource.Awaitable;
     }
     public void CompleteTurn()

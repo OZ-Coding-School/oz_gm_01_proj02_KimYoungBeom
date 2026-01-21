@@ -6,9 +6,11 @@ using UnityEngine.VFX;
 
 public class SpatialNode : PoolableComponent, INode
 {
-    [Header("Node Shape")]
+    [Header("Node Æ¯¼º")]
     [SerializeField] protected ENodeShape _nodeShape;
     [SerializeField] protected ENodeState _nodeState;
+    [SerializeField] protected ENodeTrail _nodeTrail;
+
 
     [Header("Visuals")]
     [SerializeField] protected MeshRenderer _meshRenderer;
@@ -25,6 +27,7 @@ public class SpatialNode : PoolableComponent, INode
     public List<Vector2Int> MoveableDirections => _data.allowedDirs;
     public ENodeShape NodeShape => _nodeShape;
     public ENodeState NodeState => _nodeState;
+    public ENodeTrail NodeTrail => _nodeTrail;
     public Action OnStateChanged { get; set; }
     public event Action OnUpdateVisuals;
     public void InjectData(NodeData data)
@@ -33,6 +36,7 @@ public class SpatialNode : PoolableComponent, INode
         SetCoordinate(_data.WorldCoordinate);
         _nodeShape = _data.nodeShape;
         _nodeState = _data.nodeState;
+        _nodeTrail = _data.nodeTrail;
         OnStateChanged?.Invoke();
         OnUpdateVisuals?.Invoke();
     }
