@@ -49,6 +49,9 @@ MonoBehaviour:
   poolData: {fileID: 0}
   _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}
   _behaviorAgent: {fileID: 8930469417821695522}
+  _onNotifyFromNode: {fileID: 11400000, guid: 242a765dae3e2c444876fdc1f5df08a1, type: 2}
+  _onNotifyAvatar: {fileID: 11400000, guid: d8b9b361501cd6646be26ee84cf874b3, type: 2}
+  _onNotifyDeath: {fileID: 11400000, guid: 1410f1e44d537c0449797480bb238e42, type: 2}
 --- !u!114 &8930469417821695522
 MonoBehaviour:
   m_ObjectHideFlags: 0

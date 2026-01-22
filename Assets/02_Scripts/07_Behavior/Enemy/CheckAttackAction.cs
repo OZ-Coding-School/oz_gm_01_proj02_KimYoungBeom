@@ -3,22 +3,25 @@ using Unity.Behavior;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
+using System.Collections.Generic;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "CheckAttack", story: "Check Attack [My]", category: "Action", id: "c5192858cc61f616df7bb06b9181bd7c")]
+[NodeDescription(name: "CheckAttack", story: "Check Attack [My] , [AttackTarget]", category: "Action", id: "c5192858cc61f616df7bb06b9181bd7c")]
 public partial class CheckAttackAction : Action
 {
     [SerializeReference] public BlackboardVariable<Piece_Enemy> My;
+    [SerializeReference] public BlackboardVariable<SpatialNode> AttackTarget;
+
     private SpatialNode _groundNode;
     private Vector2Int _forwardDir;
-    private SpatialNode _notifyNode;
+    private SpatialNode[] _notifyNodes;
 
     private bool _canAttack;
     protected override Status OnStart()
     {
         _groundNode = My.Value.GroundNode;
         _forwardDir = My.Value.ForwardDir;
-        _notifyNode = My.Value.NotifyNode;
+        _notifyNodes = My.Value.NotifyNodes;
         _canAttack = false;
 
         return Status.Running;
@@ -63,10 +66,16 @@ public partial class CheckAttackAction : Action
     private void CheckTargetNode(SpatialNode targetNode)
     {
         if (targetNode == null) return;
+        if (_notifyNodes.Length == 0 || _notifyNodes == null) return;
 
-        if (targetNode == _notifyNode)
+        foreach (var node in _notifyNodes)
         {
-            _canAttack = true;
+            if (targetNode == node)
+            {
+                AttackTarget.Value = targetNode;
+                _canAttack = true;
+                break;
+            }
         }
     }
 }

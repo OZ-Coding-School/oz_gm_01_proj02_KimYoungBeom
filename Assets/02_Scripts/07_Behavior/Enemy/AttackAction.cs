@@ -6,10 +6,11 @@ using UnityEngine;
 using Action = Unity.Behavior.Action;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "Attack", story: "Perform Attack [My] , [Duration]", category: "Action", id: "ceeba2ca14e714e9e30952db599264c6")]
+[NodeDescription(name: "Attack", story: "Perform Attack [My] , [AttackTarget] , [Duration]", category: "Action", id: "ceeba2ca14e714e9e30952db599264c6")]
 public partial class AttackAction : Action
 {
     [SerializeReference] public BlackboardVariable<Piece_Enemy> My;
+    [SerializeReference] public BlackboardVariable<SpatialNode> AttackTarget;
     [SerializeReference] public BlackboardVariable<float> Duration;
 
     private SpatialNode _groundNode;
@@ -19,7 +20,7 @@ public partial class AttackAction : Action
     protected override Status OnStart()
     {
         _groundNode = My.Value.GroundNode;
-        _notifyNode = My.Value.NotifyNode;
+        _notifyNode = AttackTarget.Value;
         _anim = My.Value.Anim;
         _targetPos = _groundNode.WorldCoordinate + ((Vector3)(_notifyNode.WorldCoordinate - _groundNode.WorldCoordinate) / 2.0f);
         return Status.Running;

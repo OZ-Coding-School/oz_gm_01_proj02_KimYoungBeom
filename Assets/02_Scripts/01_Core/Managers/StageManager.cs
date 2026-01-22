@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
     private readonly SpatialNode[,,] _nodeMap3D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
     private readonly SpatialNode[,] _nodeMap2D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
     private readonly List<IStageMovable> _movableList = new List<IStageMovable>();
+    private bool _isProcessing = false;
 
     public event Action onTurnCountChange;
     public event Action onStageTurnEnd;
@@ -112,14 +113,25 @@ public class StageManager : MonoBehaviour
     //PlayerController 호출(Command Pattern)
     public bool UseTurn()
     {
-        if (CurrentTurnCount == 0)
+        if (!_isProcessing)
         {
-            onTurnCountChange?.Invoke();
-            return false;
+            _isProcessing = true;
+            if (CurrentTurnCount == 0)
+            {
+                ControlTurnCountAsync();
+                return false;
+            }
+            ControlTurnCountAsync();
         }
+        return CurrentTurnCount != 0;
+    }
+    private async void ControlTurnCountAsync()
+    {
+        await Awaitable.NextFrameAsync();
         CurrentTurnCount--;
+        if (CurrentTurnCount < 0) CurrentTurnCount = 0;
         onTurnCountChange?.Invoke();
-        return true;
+        _isProcessing = false;
     }
 
     //MovingNode - Action에서 호출
