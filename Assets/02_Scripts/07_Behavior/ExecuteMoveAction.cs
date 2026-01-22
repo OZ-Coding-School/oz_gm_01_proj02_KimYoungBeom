@@ -17,11 +17,11 @@ public partial class ExecuteMoveAction : Action
     {
         if (MovingSpatialNode.Value == null) return Status.Failure;
 
-        PerformAsyncMove();
+        PerformMove();
         return Status.Success;
     }
 
-    private void PerformAsyncMove()
+    private void PerformMove()
     {
         MovingSpatialNode node = MovingSpatialNode.Value;
         Vector3Int startPos = node.WorldCoordinate;

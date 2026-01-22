@@ -9,6 +9,9 @@ public class StageManager : MonoBehaviour
 
     [Header("이벤트 구독")]
     [SerializeField] private VoidEventCHSO _onPlayerTurnEnd;        //PlayerController 발송
+    [Header("BT용 이벤트 구독")]
+    [SerializeField] private Event_ExecuteStageTurn _onExecuteStageTurn;
+    [SerializeField] private Event_ClearStacksRequest _onClearStacksRequest;
 
     private LevelGenerator _generator;
     private readonly SpatialNode[,,] _nodeMap3D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
@@ -87,6 +90,7 @@ public class StageManager : MonoBehaviour
     //InputManager 호출(false로)
     public void RequestGenerate(int index, bool doIntro)
     {
+        _onClearStacksRequest.SendEventMessage();
         if (_generator == null) return;
         if (index < 0) return;
         if (index >= _stageRepository.Count)
@@ -176,12 +180,14 @@ public class StageManager : MonoBehaviour
     public SpatialNode GetNodeAt(Vector3Int key)
     {
         Vector3Int keyForArray = CalculateArrayIndex(key);
+        if (keyForArray.x < 0 || keyForArray.z < 0 || keyForArray.y < 0) return null;
         var node = _nodeMap3D[keyForArray.x, keyForArray.y, keyForArray.z];
         return node;
     }
     public SpatialNode GetNodeAt(Vector2Int key)
     {
         var keyForArray = CalculateArrayIndex(key);
+        if (keyForArray.x < 0 || keyForArray.y < 0) return null;
         var node = _nodeMap2D[keyForArray.x, keyForArray.y];
         return node;
     }
@@ -197,6 +203,7 @@ public class StageManager : MonoBehaviour
         {
             tasks.Add(obj.ExecuteStageTurn());
         }
+        _onExecuteStageTurn.SendEventMessage();
         foreach (var task in tasks)
         {
             await task;

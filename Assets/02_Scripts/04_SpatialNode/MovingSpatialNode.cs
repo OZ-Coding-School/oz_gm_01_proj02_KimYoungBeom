@@ -6,21 +6,15 @@ public class MovingSpatialNode : SpatialNode, IStageMovable
 {
     [SerializeField] private BehaviorGraphAgent _behaviorAgent;
 
-    [Header("BT용 이벤트 구독")]
-    [SerializeField] private Event_ExecuteStageTurn _onExecuteStageTurn;
-    [SerializeField] private Event_ClearStacksRequest _onClearStacksRequest;
-
     private AwaitableCompletionSource _turnCompletionSource;
 
     public override void OnSpawn()
     {
         base.OnSpawn();
-        _onClearStacksRequest.SendEventMessage();
     }
     public override void OnDespawn()
     {
         base.OnDespawn();
-        _onClearStacksRequest.SendEventMessage();
     }
     public async Awaitable ExecuteStageTurn()
     {
@@ -28,7 +22,6 @@ public class MovingSpatialNode : SpatialNode, IStageMovable
         if (_behaviorAgent == null) return;
 
         _turnCompletionSource = new AwaitableCompletionSource();
-        _onExecuteStageTurn.SendEventMessage();
         await _turnCompletionSource.Awaitable;
     }
 

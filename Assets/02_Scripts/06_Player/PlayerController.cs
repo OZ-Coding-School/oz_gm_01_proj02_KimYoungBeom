@@ -47,7 +47,7 @@ public class PlayerController : PoolableComponent
     private bool _isDeath = false;
     private EViewMode _currentView = EViewMode.Quarter;
 
-
+    private SpatialNode _virtualNode;
     #endregion
 
     #region public ¸â¹ö
@@ -142,6 +142,11 @@ public class PlayerController : PoolableComponent
     private void HandleViewChanged(EViewMode mode)
     {
         _currentView = mode;
+        if (mode == EViewMode.Top)
+        {
+            _virtualNode = Managers.Stage.GetNodeAt(CurrentNode.GridCoordinate);
+        }
+
     }
     private void HandleStageTurnEnd()
     {
@@ -155,7 +160,7 @@ public class PlayerController : PoolableComponent
     private void HandleAttackSuccess(Vector2Int enemyDir, SpatialNode notifyNode)
     {
         if (notifyNode != CurrentNode) return;
-
+        if (notifyNode is MovingSpatialNode) return;
         EnemyForwardDir = enemyDir;
         _isDeath = true;
         Managers.Input.IsPlayerDeath = true;
@@ -219,17 +224,19 @@ public class PlayerController : PoolableComponent
 
     private void TryMove(Vector2Int direction)
     {
-        if (!CurrentNode.MoveableDirections.Contains(direction)) return;
+
         if (Managers.Camera.IsBlending) return;
         if (_currentView == EViewMode.FirstPerson) return;
 
         if (_currentView == EViewMode.Top)
         {
+            if (!_virtualNode.MovableDirections.Contains(direction)) return;
             Vector2Int targetKey = CurrentNode.GridCoordinate + direction;
             ExecuteCommandByKey(targetKey, direction);
         }
         else
         {
+            if (!CurrentNode.MovableDirections.Contains(direction)) return;
             Vector3Int targetKey = CurrentNode.WorldCoordinate + new Vector3Int(direction.x, 0, direction.y);
             ExecuteCommandByKey(targetKey, direction);
         }
@@ -264,7 +271,7 @@ public class PlayerController : PoolableComponent
     private bool CheckTargetNodeToMove(SpatialNode target, Vector2Int dir)
     {
         if (target == null) return false;
-        if (!target.MoveableDirections.Contains(-dir)) return false;
+        if (!target.MovableDirections.Contains(-dir)) return false;
         if (GetTargetNodeEnemyForward(target) == -dir) return false;
         return true;
     }
@@ -313,6 +320,7 @@ public class PlayerController : PoolableComponent
                 _ = NotifySpecialNodeAsync(node, _durationMultiplier);
                 break;
             case ENodeState.Moving:
+                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 transform.SetParent(node.transform);
                 _history.Clear();
                 break;
@@ -326,7 +334,7 @@ public class PlayerController : PoolableComponent
                 _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 break;
             default:
-                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 break;
         }
     }

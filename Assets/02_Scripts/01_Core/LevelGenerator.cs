@@ -10,6 +10,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private PoolableObjSO _goalPoolData;
     [SerializeField] private PoolableObjSO _keyPoolData;
     [SerializeField] private PoolableObjSO _fixedEnemyPoolData;
+    [SerializeField] private PoolableObjSO _movingEnemyPoolData;
 
     private SpatialNode _startNode;
     private SpatialNode _finishNode;
@@ -107,7 +108,12 @@ public class LevelGenerator : MonoBehaviour
             case ENodeState.OnEnemyUp:
             case ENodeState.OnEnemyRight:
             case ENodeState.OnEnemyLeft:
-                var enemy = Managers.Pool.Spawn<Piece_Enemy>(_fixedEnemyPoolData, node.WorldCoordinate);
+                var fixedEnemy = Managers.Pool.Spawn<Piece_Enemy>(_fixedEnemyPoolData, node.WorldCoordinate);
+                fixedEnemy.InjectNode(node);
+                CheckAndSetMovableList(fixedEnemy);
+                break;
+            case ENodeState.MovingEnemy:
+                var enemy = Managers.Pool.Spawn<Piece_Enemy>(_movingEnemyPoolData, node.WorldCoordinate);
                 enemy.InjectNode(node);
                 CheckAndSetMovableList(enemy);
                 break;

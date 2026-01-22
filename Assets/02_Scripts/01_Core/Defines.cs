@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class Defines
@@ -19,12 +20,14 @@ public static class Defines
     public static readonly int JUMP_HASH = Animator.StringToHash("Jump");
     public static readonly int ATTACK_HASH = Animator.StringToHash("Attack");
     public static readonly int DEATH_HASH = Animator.StringToHash("Death");
+    public static readonly int MOVE_HASH = Animator.StringToHash("Move");
 
     public static readonly int ANIM_SPEED_HASH = Animator.StringToHash("AnimSpeed");
 
     //데이터매니저
     public static readonly int CAM_SENS_MAX = 5;
     public static readonly int CAM_SENS_MIN = 1;
+
 }
 public enum ENodeShape
 {
@@ -33,6 +36,10 @@ public enum ENodeShape
 public enum ENodeState
 {
     None, Start, Finish, Moving, Key, OnEnemyUp, OnEnemyDown, OnEnemyLeft, OnEnemyRight, MovingEnemy
+}
+public enum ENodeTrail
+{
+    None, Horizontal, Vertical, UpRight, UpLeft, DownRight, DownLeft, Up, Left, Right, Down
 }
 public enum EViewMode
 {

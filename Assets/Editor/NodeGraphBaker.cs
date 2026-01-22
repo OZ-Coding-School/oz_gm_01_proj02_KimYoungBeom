@@ -48,6 +48,7 @@ public class NodeGraphBaker : EditorWindow
                 allowedDirs = GetDirectionsFromShape(node.NodeShape),
                 nodeShape = node.NodeShape,
                 nodeState = node.NodeState,
+                nodeTrail = node.NodeTrail,
             };
             targetGraph.AddNode(newData);
         }

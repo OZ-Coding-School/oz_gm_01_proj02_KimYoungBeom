@@ -6,13 +6,11 @@ public class Piece_Enemy : Piece_Base, IStageMovable
 {
     [SerializeField] private BehaviorGraphAgent _behaviorAgent;
 
-    [Header("BT용 이벤트 구독")]
-    [SerializeField] private Event_ExecuteStageTurn _onExecuteStageTurn;
-
     public bool IsMovingEnemy { get; private set; } = false;
     public Vector2Int ForwardDir => _forwordDir;
     public SpatialNode NotifyNode => _notifyNode;
     public Animator Anim => _anim;
+    public bool IsDeath => _isDeath;
 
     private Vector2Int _forwordDir;
     private SpatialNode _notifyNode;
@@ -43,6 +41,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     public override void OnDespawn()
     {
         base.OnDespawn();
+        transform.DOKill();
         //애니메이션 정리
     }
 
@@ -70,7 +69,6 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         if (_behaviorAgent == null || _isDeath) return;
         _turnCompletionSource = new AwaitableCompletionSource();
-        _onExecuteStageTurn.SendEventMessage();
         await _turnCompletionSource.Awaitable;
     }
     public void CompleteTurn()
@@ -89,6 +87,8 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         _forwordDir = forwardDir;
     }
+
+
     protected override void HandleIntroEnd()
     {
         //정해진 곳으로 회전하며 아이들 전환
@@ -99,8 +99,17 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         SpatialNode prevPlayerNode = _notifyNode;
         _notifyNode = node;
-
-        if (node == GroundNode)
+        bool isTopMatch = false;
+        if (Managers.Camera.CurrentViewMode == EViewMode.Top)
+        {
+            SpatialNode vNotifyNode = Managers.Stage.GetNodeAt(node.GridCoordinate);
+            SpatialNode vGroundNode = Managers.Stage.GetNodeAt(GroundNode.GridCoordinate);
+            if (vNotifyNode == vGroundNode)
+            {
+                isTopMatch = true;
+            }
+        }
+        if (node == GroundNode || isTopMatch)
         {
             //죽음 애니메이션
             Vector3Int prevNodePos = prevPlayerNode == null ? Vector3Int.zero : prevPlayerNode.WorldCoordinate;
@@ -109,6 +118,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
             ReturnPoolAfterAnimation(_deathLookDir);
         }
     }
+
     private void ReturnPoolAfterAnimation(Vector3 deathLookDir)
     {
         _isDeath = true;
