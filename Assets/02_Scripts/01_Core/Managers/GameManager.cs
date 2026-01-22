@@ -10,8 +10,9 @@ public class GameManager : MonoBehaviour
     [Header("이벤트 구독")]
     [SerializeField] private VoidEventCHSO _onStageClear;
 
-    private bool bIsPause = false;
-    private bool bIsGameOver = false;
+    private bool _isPause = false;
+    private bool _isGameOver = false;
+    private bool _isProcessing = false;
     public bool CanPause { get; set; } = false;
     public int CurrentStageIndex { get; private set; } = -1;
     private void Start()
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
 
         CurrentStageIndex = stageIndex;
         Time.timeScale = 1.0f;
-        bIsPause = false;
+        _isPause = false;
         SceneManager.LoadScene(Defines.SCENE_STAGE);
     }
     public void LoadLobbyScene()
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
         Managers.Pool.DespawnAll();
         CurrentStageIndex = -1;
         Time.timeScale = 1.0f;
-        bIsPause = false;
+        _isPause = false;
 
         Managers.Camera.ChangeView(EViewMode.Lobby);
 
@@ -58,13 +59,13 @@ public class GameManager : MonoBehaviour
     {
         if (!CanPause) return;
 
-        if (bIsGameOver)
+        if (_isGameOver)
         {
             LoadStageScene(CurrentStageIndex);
             return;
         }
-        bIsPause = !bIsPause;
-        if (bIsPause)
+        _isPause = !_isPause;
+        if (_isPause)
         {
             Time.timeScale = 0.0f;
             _onGamePause.Raised();
@@ -77,11 +78,17 @@ public class GameManager : MonoBehaviour
     }
     public void HandleStageClear()
     {
+        if (_isProcessing) return;
+        _isProcessing = true;
+        ProcessStageClearAsync();
+    }
+
+    private async void ProcessStageClearAsync()
+    {
         CurrentStageIndex++;
-
-        //하나 커진 인덱스를 DataManager에 저장하여 완료한 스테이지 기록
         Managers.Data.SetBestClearedStageNum(CurrentStageIndex);
-
         Managers.Stage.RequestGenerate(CurrentStageIndex);
+        await Awaitable.NextFrameAsync();
+        _isProcessing = false;
     }
 }

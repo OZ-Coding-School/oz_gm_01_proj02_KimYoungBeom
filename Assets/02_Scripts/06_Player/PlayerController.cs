@@ -9,7 +9,7 @@ public class PlayerController : PoolableComponent
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
     [SerializeField] private float _durationMultiplier = 0.4f;
-    [SerializeField] private float _enemyDurationMultiplier = 0.3f;
+    [SerializeField] private float _enemyDurationMultiplier = 0.25f;
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
     [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //Piece_Enemy 구독

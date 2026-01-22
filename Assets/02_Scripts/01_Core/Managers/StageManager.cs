@@ -209,7 +209,6 @@ public class StageManager : MonoBehaviour
     private async void StartStageTurn()
     {
         if (!IsStageTurn) return;
-
         List<Awaitable> tasks = new List<Awaitable>();
         foreach (var obj in _movableList)
         {

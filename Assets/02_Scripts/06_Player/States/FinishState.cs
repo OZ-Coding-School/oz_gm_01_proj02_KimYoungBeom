@@ -7,7 +7,8 @@ public class FinishState : PlayerState
     public override void Enter()
     {
         _elapsedTimeBase = 0.0f;
-        _player.Anim.CrossFade(Defines.VICTORY_IDLE_HASH, 0.1f);
+        if (!_player.IsAvatar)
+            _player.Anim.CrossFade(Defines.VICTORY_IDLE_HASH, 0.1f);
     }
     public override void Update() { }
     public override void FixedUpdate()
