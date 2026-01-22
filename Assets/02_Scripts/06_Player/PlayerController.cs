@@ -320,7 +320,7 @@ public class PlayerController : PoolableComponent
                 _ = NotifySpecialNodeAsync(node, _durationMultiplier);
                 break;
             case ENodeState.Moving:
-                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 transform.SetParent(node.transform);
                 _history.Clear();
                 break;
@@ -334,7 +334,7 @@ public class PlayerController : PoolableComponent
                 _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 break;
             default:
-                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
                 break;
         }
     }

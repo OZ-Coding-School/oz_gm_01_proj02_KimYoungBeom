@@ -11,13 +11,22 @@ public partial class ChangeDirAtNotMoveAction : Action
     [SerializeReference] public BlackboardVariable<Piece_Enemy> My;
 
     private SpatialNode _groundNode;
+    private SpatialNode _virtualNode;
     private Vector2Int _forwardDir;
     private Vector2Int[] _movablDir;
     protected override Status OnStart()
     {
-        _groundNode = My.Value.GroundNode;
         _forwardDir = My.Value.ForwardDir;
-        _movablDir = _groundNode.GetTrailDirection();
+        _groundNode = My.Value.GroundNode;
+        if (Managers.Camera.CurrentViewMode == EViewMode.Top)
+        {
+            _virtualNode = Managers.Stage.GetNodeAt(_groundNode.GridCoordinate);
+            _movablDir = _virtualNode.GetTrailDirection();
+        }
+        else
+        {
+            _movablDir = _groundNode.GetTrailDirection();
+        }
         return Status.Running;
     }
 
@@ -34,6 +43,7 @@ public partial class ChangeDirAtNotMoveAction : Action
     private void ChangeDirection()
     {
         if (_movablDir.Length < 2) return;
+        if (_movablDir[0] == Vector2Int.zero) return;
         if (_movablDir[1] == Vector2Int.zero) return;
         foreach (var move in _movablDir)
         {

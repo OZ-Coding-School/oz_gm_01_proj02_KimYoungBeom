@@ -99,8 +99,17 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         SpatialNode prevPlayerNode = _notifyNode;
         _notifyNode = node;
-
-        if (node == GroundNode)
+        bool isTopMatch = false;
+        if (Managers.Camera.CurrentViewMode == EViewMode.Top)
+        {
+            SpatialNode vNotifyNode = Managers.Stage.GetNodeAt(node.GridCoordinate);
+            SpatialNode vGroundNode = Managers.Stage.GetNodeAt(GroundNode.GridCoordinate);
+            if (vNotifyNode == vGroundNode)
+            {
+                isTopMatch = true;
+            }
+        }
+        if (node == GroundNode || isTopMatch)
         {
             //죽음 애니메이션
             Vector3Int prevNodePos = prevPlayerNode == null ? Vector3Int.zero : prevPlayerNode.WorldCoordinate;
@@ -109,6 +118,7 @@ public class Piece_Enemy : Piece_Base, IStageMovable
             ReturnPoolAfterAnimation(_deathLookDir);
         }
     }
+
     private void ReturnPoolAfterAnimation(Vector3 deathLookDir)
     {
         _isDeath = true;
