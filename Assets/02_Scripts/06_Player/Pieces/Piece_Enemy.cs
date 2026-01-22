@@ -1,24 +1,32 @@
 using Unity.Behavior;
 using UnityEngine;
 using DG.Tweening;
+using System.Collections.Generic;
 
 public class Piece_Enemy : Piece_Base, IStageMovable
 {
     [SerializeField] private BehaviorGraphAgent _behaviorAgent;
 
+    [Header("이벤트 구독")]
+    [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //PlayerController 발송
+    [SerializeField] private BoolEventCHSO _onNotifyAvatar;             //PlayerController 발송
+    [SerializeField] private BoolEventCHSO _onNotifyDeath;              //PlayerController 발송
     public bool IsMovingEnemy { get; private set; } = false;
     public Vector2Int ForwardDir => _forwordDir;
-    public SpatialNode NotifyNode => _notifyNode;
+    public SpatialNode[] NotifyNodes => _notifyNodes;
     public Animator Anim => _anim;
     public bool IsDeath => _isDeath;
 
     private Vector2Int _forwordDir;
-    private SpatialNode _notifyNode;
+    private readonly SpatialNode[] _notifyNodes = new SpatialNode[2];
 
     private bool _isIntroEnd = false;
     private bool _isDeath = false;
+    private bool _isAvatar;
+
     private Vector3 _deathLookDir;
     private Animator _anim;
+    private SpatialNode _prevPlayerNode;
 
     private AwaitableCompletionSource _turnCompletionSource;
 
@@ -26,21 +34,30 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     {
         _anim = GetComponentInChildren<Animator>();
     }
+
     public override void OnSpawn()
     {
         base.OnSpawn();
+
+        _onNotifyFromNode.onEvent += RegisterFromNode;
+        _onNotifyAvatar.onEvent += RecognizePlayer;
+        _onNotifyDeath.onEvent += HandleAvatarDeath;
+
         _anim.CrossFadeInFixedTime(Defines.IDLE_HASH, 0.0f);
         CompleteTurn();
 
         _isDeath = false;
         _isIntroEnd = false;
-        _notifyNode = null;
 
         //카메라를 보며 적당한 애니메이션 실행
     }
     public override void OnDespawn()
     {
         base.OnDespawn();
+        _onNotifyFromNode.onEvent -= RegisterFromNode;
+        _onNotifyAvatar.onEvent -= RecognizePlayer;
+        _onNotifyDeath.onEvent -= HandleAvatarDeath;
+
         transform.DOKill();
         //애니메이션 정리
     }
@@ -97,8 +114,9 @@ public class Piece_Enemy : Piece_Base, IStageMovable
 
     protected override void HandleNotify(SpatialNode node)
     {
-        SpatialNode prevPlayerNode = _notifyNode;
-        _notifyNode = node;
+        if (_isAvatar) _notifyNodes[1] = node;
+        else _notifyNodes[0] = node;
+
         bool isTopMatch = false;
         if (Managers.Camera.CurrentViewMode == EViewMode.Top)
         {
@@ -112,11 +130,24 @@ public class Piece_Enemy : Piece_Base, IStageMovable
         if (node == GroundNode || isTopMatch)
         {
             //죽음 애니메이션
-            Vector3Int prevNodePos = prevPlayerNode == null ? Vector3Int.zero : prevPlayerNode.WorldCoordinate;
-            _deathLookDir = prevNodePos - _notifyNode.WorldCoordinate;
+            Vector3Int prevNodePos = _prevPlayerNode == null ? Vector3Int.zero : _prevPlayerNode.WorldCoordinate;
+            _deathLookDir = prevNodePos - node.WorldCoordinate;
             GroundNode.ChangeNodeState(ENodeState.None);
             ReturnPoolAfterAnimation(_deathLookDir);
         }
+    }
+    private void HandleAvatarDeath(bool isAvatar)
+    {
+        if (!isAvatar) return;
+        _notifyNodes[1] = null;
+    }
+    private void RecognizePlayer(bool isAvatar)
+    {
+        _isAvatar = isAvatar;
+    }
+    private void RegisterFromNode(SpatialNode node)
+    {
+        _prevPlayerNode = node;
     }
 
     private void ReturnPoolAfterAnimation(Vector3 deathLookDir)

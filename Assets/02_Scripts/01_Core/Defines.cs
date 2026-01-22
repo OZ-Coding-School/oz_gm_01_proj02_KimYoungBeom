@@ -35,7 +35,7 @@ public enum ENodeShape
 }
 public enum ENodeState
 {
-    None, Start, Finish, Moving, Key, OnEnemyUp, OnEnemyDown, OnEnemyLeft, OnEnemyRight, MovingEnemy
+    None, Start, Finish, Moving, Key, OnEnemyUp, OnEnemyDown, OnEnemyLeft, OnEnemyRight, MovingEnemy, Avatar
 }
 public enum ENodeTrail
 {

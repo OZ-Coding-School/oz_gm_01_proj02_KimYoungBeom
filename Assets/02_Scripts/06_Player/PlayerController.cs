@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class PlayerController : PoolableComponent
 {
@@ -10,9 +9,13 @@ public class PlayerController : PoolableComponent
     [SerializeField] private float _sadIdleCool = 3.0f;
     [SerializeField] private float _rotateSpeed = 15.0f;
     [SerializeField] private float _durationMultiplier = 0.4f;
-    [SerializeField] private float _enemyDurationMultiplier = 0.3f;
+    [SerializeField] private float _enemyDurationMultiplier = 0.25f;
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
+    [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //Piece_Enemy 구독
+    [SerializeField] private BoolEventCHSO _onNotifyAvatar;             //Piece_Enemy 구독
+    [SerializeField] private BoolEventCHSO _onNotifyDeath;              //Piece_Enemy 구독
+
     [SerializeField] private VoidEventCHSO _onStageClear;               //GameManager 구독
     [SerializeField] private BoolEventCHSO _onPlayerMoving;             //BtnAndViewController 구독
     [SerializeField] private VoidEventCHSO _onPlayerTurnEnd;            //StageManager 구독
@@ -46,6 +49,7 @@ public class PlayerController : PoolableComponent
     private bool _isLastMove = false;
     private bool _isDeath = false;
     private EViewMode _currentView = EViewMode.Quarter;
+    private bool _isAvatar;
 
     private SpatialNode _virtualNode;
     #endregion
@@ -58,11 +62,13 @@ public class PlayerController : PoolableComponent
     public bool IsMoving { get; set; } = false;
     public bool IsGoTo { get; set; } = false;
     public bool IsGoFrom { get; set; } = false;
+    public bool IsAvatar => _isAvatar;
     public Vector2Int EnemyForwardDir { get; private set; }
     public Animator Anim => _anim;
     public float SadIdleCool => _sadIdleCool;
     public VoidEventCHSO OnStageClear => _onStageClear;
     public VoidEventCHSO OnPlayerTurnEnd => _onPlayerTurnEnd;
+    public BoolEventCHSO OnNotifyDeath => _onNotifyDeath;
     public Transform EyePoint => _eyePoint;
     public EViewMode CurrentView => _currentView;
     //이벤트
@@ -121,12 +127,19 @@ public class PlayerController : PoolableComponent
         if (_currentView != EViewMode.FirstPerson) return;
         transform.rotation = Quaternion.Euler(0f, Managers.Camera.GetPanValue(), 0f);
     }
-    public void Init(SpatialNode startNode)
+    public void Init(SpatialNode startNode, bool isAvatar)
     {
         InitAtDespawn();
         SetCurrentNode(startNode);
+        _isAvatar = isAvatar;
+        NotifySpecialNode(CurrentNode, null);
+
         transform.position = startNode.WorldCoordinate + Defines.PLAYER_Y_OFFSET;
         _history.Clear();
+    }
+    public void Init(SpatialNode startNode)
+    {
+        Init(startNode, false);
     }
     #endregion
 
@@ -265,7 +278,7 @@ public class PlayerController : PoolableComponent
             moveCmd.Execute();
             _history.Push(moveCmd);
             if (CurrentNode.NodeState == ENodeState.Moving) _history.Clear();
-            NotifySpecialNode(targetNode);
+            NotifySpecialNode(targetNode, CurrentNode);
         }
     }
     private bool CheckTargetNodeToMove(SpatialNode target, Vector2Int dir)
@@ -312,7 +325,7 @@ public class PlayerController : PoolableComponent
             }
         }
     }
-    private void NotifySpecialNode(SpatialNode node)
+    private void NotifySpecialNode(SpatialNode node, SpatialNode fromNode)
     {
         switch (node.NodeState)
         {
@@ -331,24 +344,30 @@ public class PlayerController : PoolableComponent
             case ENodeState.OnEnemyLeft:
             case ENodeState.OnEnemyRight:
             case ENodeState.OnEnemyUp:
-                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
+                _ = NotifySpecialNodeAsync(node, fromNode, _enemyDurationMultiplier);
                 break;
             default:
-                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
+                _ = NotifySpecialNodeAsync(node, fromNode, _enemyDurationMultiplier);
                 break;
         }
     }
-    private async Awaitable NotifySpecialNodeAsync(SpatialNode node, float durationMultiplier)
+    private async Awaitable NotifySpecialNodeAsync(SpatialNode node, SpatialNode fromNode, float durationMultiplier)
     {
         try
         {
             await Awaitable.WaitForSecondsAsync(_moveDuration * durationMultiplier, destroyCancellationToken);
+            if (fromNode != null) _onNotifyFromNode?.Raised(fromNode);
+            _onNotifyAvatar?.Raised(_isAvatar);
             _onNotifySpecialNode?.Raised(node);
         }
         catch
         {
             Utils.Log("PlayerController - NotifySpecialNodeAsync CATCH");
         }
+    }
+    private async Awaitable NotifySpecialNodeAsync(SpatialNode node, float durationMultiplier)
+    {
+        await NotifySpecialNodeAsync(node, null, durationMultiplier);
     }
     private Vector2Int GetDiscreteDirection(Vector2 input)
     {

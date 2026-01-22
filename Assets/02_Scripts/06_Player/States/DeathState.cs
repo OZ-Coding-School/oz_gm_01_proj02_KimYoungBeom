@@ -22,7 +22,13 @@ public class DeathState : PlayerState
         if (_elapsedTimeBase > _player.GetClipLength(Defines.DEATH_HASH) * _downEndTimeRate)
         {
             _elapsedTimeBase = 0.0f;
-            Managers.Input.ExecuteReloadStage();
+            if (_player.IsAvatar)
+            {
+                Managers.Input.IsPlayerDeath = false;
+                _player.OnNotifyDeath?.Raised(_player.IsAvatar);
+                _player.ReturnPool();
+            }
+            else Managers.Input.ExecuteReloadStage();
         }
     }
     public override void Exit()
