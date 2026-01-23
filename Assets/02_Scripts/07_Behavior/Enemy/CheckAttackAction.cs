@@ -3,7 +3,6 @@ using Unity.Behavior;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
-using System.Collections.Generic;
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(name: "CheckAttack", story: "Check Attack [My] , [AttackTarget]", category: "Action", id: "c5192858cc61f616df7bb06b9181bd7c")]
