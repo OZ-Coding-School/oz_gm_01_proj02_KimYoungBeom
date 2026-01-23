@@ -18,8 +18,20 @@ public interface IPoolContainer
 }
 public interface INode
 {
-    Vector3 WorldPosition { get; }
+    Vector3Int WorldCoordinate { get; }
     Vector2Int GridCoordinate { get; }
-    List<Vector2Int> MoveableDirections { get; }
+    List<Vector2Int> MovableDirections { get; }
     Action OnStateChanged { get; set; }
+}
+
+public interface ICommand
+{
+    void Execute();
+    void UnDo();
+    bool CheckUnDo();
+    public Vector2Int MoveDir { get; }
+}
+public interface IStageMovable
+{
+    Awaitable ExecuteStageTurn();
 }
