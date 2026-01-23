@@ -33,25 +33,13 @@ public partial class MoveAction : Action
         My.Value.transform.DOMove(_toNode.WorldCoordinate, Duration.Value)
             .SetEase(Ease.InOutQuad);
         _fromNode.ChangeNodeState(ENodeState.None);
-        _toNode.ChangeNodeState(GetNodeState(_forwardDir));
+        _toNode.ChangeNodeState(My.Value.GetNodeState(_forwardDir));
         My.Value.ChangeGroundNode(_toNode);
         return Status.Success;
     }
 
     protected override void OnEnd()
     {
-    }
-
-    private ENodeState GetNodeState(Vector2Int forward)
-    {
-        return forward switch
-        {
-            var f when f == Vector2Int.up => ENodeState.OnEnemyUp,
-            var f when f == Vector2Int.down => ENodeState.OnEnemyDown,
-            var f when f == Vector2Int.left => ENodeState.OnEnemyLeft,
-            var f when f == Vector2Int.right => ENodeState.OnEnemyRight,
-            _ => ENodeState.None
-        };
     }
 }
 

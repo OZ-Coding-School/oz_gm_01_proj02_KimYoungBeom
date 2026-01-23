@@ -52,8 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Piece_Goal
   poolData: {fileID: 0}
   _onNotifySpecialNode: {fileID: 11400000, guid: 53e2d6415ff31024b859261f46f2aed5, type: 2}
-  _rotateHalfDuration: 1
-  _bounceAmplitude: 0.2
+  _onNotifyFromNode: {fileID: 11400000, guid: 242a765dae3e2c444876fdc1f5df08a1, type: 2}
 --- !u!1001 &2467469880056532312
 PrefabInstance:
   m_ObjectHideFlags: 0

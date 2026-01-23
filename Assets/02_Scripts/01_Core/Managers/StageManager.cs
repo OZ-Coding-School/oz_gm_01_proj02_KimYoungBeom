@@ -23,7 +23,7 @@ public class StageManager : MonoBehaviour
     public event Action onStageTurnEnd;
     public event Action onGenerateLevel;
     public event Action onClearRequest;
-    public event Action onGetAllKeys;
+    public event Action<bool> onGetAllKeys;
     public event Action onIntroEnd;
     public event Action<Vector2Int, SpatialNode> onAttackSuccess;
     public int CurrentTurnCount { get; private set; }
@@ -74,13 +74,13 @@ public class StageManager : MonoBehaviour
     {
         _movableList.Add(movable);
     }
-    public void AddRemainingKeyCount()
-    {
-        RemainingKeyCount++;
-    }
     public void IntroEndRequest()
     {
         onIntroEnd?.Invoke();
+    }
+    public void AddRemainingKeyCount()
+    {
+        RemainingKeyCount++;
     }
     //GameManager 호출 - 재시작
     public void RequestGenerate(int index)
@@ -176,12 +176,17 @@ public class StageManager : MonoBehaviour
     {
         onClearRequest?.Invoke();
     }
+    public void DeactiveButton()
+    {
+        RemainingKeyCount++;
+        onGetAllKeys?.Invoke(false);
+    }
     public void GetKeyRequest()
     {
         RemainingKeyCount--;
         if (RemainingKeyCount <= 0)
         {
-            onGetAllKeys?.Invoke();
+            onGetAllKeys?.Invoke(true);
         }
     }
     public void BroadcastAttackSuccess(Vector2Int enemyForward, SpatialNode notifyNode)

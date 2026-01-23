@@ -2,7 +2,7 @@
 - Project name: Cubes
 - Unity version: Unity 6000.3.2f1
 - Active game object:
-  - Name: MovingEnemy
+  - Name: Basic_Node (2)
   - Tag: Untagged
-  - Layer: VisualAlways
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

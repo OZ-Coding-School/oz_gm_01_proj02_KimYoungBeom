@@ -36,7 +36,7 @@ public class MoveCommand : ICommand
     public void UnDo()
     {
         Vector3 undoPos = _fromNode.WorldCoordinate + Defines.PLAYER_Y_OFFSET;
-
+        _player.NotifySpecialNode(_fromNode, _player.CurrentNode);
         _player.transform.DOMove(undoPos, _duration)
             .SetEase(Ease.InOutSine)
             .OnComplete(() =>
