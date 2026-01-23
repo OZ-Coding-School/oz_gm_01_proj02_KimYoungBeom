@@ -12,6 +12,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private PoolableObjSO _fixedEnemyPoolData;
     [SerializeField] private PoolableObjSO _movingEnemyPoolData;
     [SerializeField] private PoolableObjSO _avatarPoolData;
+    [SerializeField] private PoolableObjSO _buttonPoolData;
 
     private SpatialNode _startNode;
     private SpatialNode _finishNode;
@@ -121,6 +122,11 @@ public class LevelGenerator : MonoBehaviour
             case ENodeState.Avatar:
                 var avatar = Managers.Pool.Spawn<PlayerController>(_avatarPoolData, _startNode.WorldCoordinate);
                 avatar.Init(node, true);
+                break;
+            case ENodeState.Button:
+                Managers.Stage.AddRemainingKeyCount();
+                var btn = Managers.Pool.Spawn<Piece_Button>(_buttonPoolData, node.WorldCoordinate);
+                btn.InjectNode(node);
                 break;
         }
     }

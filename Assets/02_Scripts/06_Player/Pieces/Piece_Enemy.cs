@@ -103,8 +103,19 @@ public class Piece_Enemy : Piece_Base, IStageMovable
     public void ChangeForwardDir(Vector2Int forwardDir)
     {
         _forwordDir = forwardDir;
+        GroundNode.ChangeNodeState(GetNodeState(_forwordDir));
     }
-
+    public ENodeState GetNodeState(Vector2Int forward)
+    {
+        return forward switch
+        {
+            var f when f == Vector2Int.up => ENodeState.OnEnemyUp,
+            var f when f == Vector2Int.down => ENodeState.OnEnemyDown,
+            var f when f == Vector2Int.left => ENodeState.OnEnemyLeft,
+            var f when f == Vector2Int.right => ENodeState.OnEnemyRight,
+            _ => ENodeState.None
+        };
+    }
 
     protected override void HandleIntroEnd()
     {

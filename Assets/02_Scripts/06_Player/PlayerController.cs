@@ -10,9 +10,10 @@ public class PlayerController : PoolableComponent
     [SerializeField] private float _rotateSpeed = 15.0f;
     [SerializeField] private float _durationMultiplier = 0.4f;
     [SerializeField] private float _enemyDurationMultiplier = 0.25f;
+    [SerializeField] private float _buttonDurationMultiplier = 0.8f;
     [Header("이벤트 발송")]
     [SerializeField] private SpatialNodeEventCHSO _onNotifySpecialNode; //Piece_Base 구독
-    [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //Piece_Enemy 구독
+    [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //Piece_Enemy, Button 구독
     [SerializeField] private BoolEventCHSO _onNotifyAvatar;             //Piece_Enemy 구독
     [SerializeField] private BoolEventCHSO _onNotifyDeath;              //Piece_Enemy 구독
 
@@ -50,6 +51,7 @@ public class PlayerController : PoolableComponent
     private bool _isDeath = false;
     private EViewMode _currentView = EViewMode.Quarter;
     private bool _isAvatar;
+    private bool _isFirstTopTurn = false;
 
     private SpatialNode _virtualNode;
     #endregion
@@ -157,7 +159,12 @@ public class PlayerController : PoolableComponent
         _currentView = mode;
         if (mode == EViewMode.Top)
         {
+            _isFirstTopTurn = true;
             _virtualNode = Managers.Stage.GetNodeAt(CurrentNode.GridCoordinate);
+        }
+        else
+        {
+            _isFirstTopTurn = false;
         }
 
     }
@@ -243,7 +250,10 @@ public class PlayerController : PoolableComponent
 
         if (_currentView == EViewMode.Top)
         {
-            if (!_virtualNode.MovableDirections.Contains(direction)) return;
+
+            if (!_virtualNode.MovableDirections.Contains(direction) && _isFirstTopTurn) return;
+            if (!CurrentNode.MovableDirections.Contains(direction)) return;
+
             Vector2Int targetKey = CurrentNode.GridCoordinate + direction;
             ExecuteCommandByKey(targetKey, direction);
         }
@@ -270,6 +280,8 @@ public class PlayerController : PoolableComponent
 
         if (Managers.Stage.UseTurn())
         {
+            if (_isFirstTopTurn) _isFirstTopTurn = false;
+
             IsMoving = true;
             IsGoTo = true;
             _onPlayerMoving.Raised(IsMoving);
@@ -325,26 +337,29 @@ public class PlayerController : PoolableComponent
             }
         }
     }
-    private void NotifySpecialNode(SpatialNode node, SpatialNode fromNode)
+    public void NotifySpecialNode(SpatialNode node, SpatialNode fromNode)
     {
         switch (node.NodeState)
         {
             case ENodeState.Finish:
-                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                _ = NotifySpecialNodeAsync(node, fromNode, _durationMultiplier);
                 break;
             case ENodeState.Moving:
-                _ = NotifySpecialNodeAsync(node, _enemyDurationMultiplier);
+                _ = NotifySpecialNodeAsync(node, fromNode, _enemyDurationMultiplier);
                 transform.SetParent(node.transform);
                 _history.Clear();
                 break;
             case ENodeState.Key:
-                _ = NotifySpecialNodeAsync(node, _durationMultiplier);
+                _ = NotifySpecialNodeAsync(node, fromNode, _durationMultiplier);
                 break;
             case ENodeState.OnEnemyDown:
             case ENodeState.OnEnemyLeft:
             case ENodeState.OnEnemyRight:
             case ENodeState.OnEnemyUp:
                 _ = NotifySpecialNodeAsync(node, fromNode, _enemyDurationMultiplier);
+                break;
+            case ENodeState.Button:
+                _ = NotifySpecialNodeAsync(node, fromNode, _buttonDurationMultiplier);
                 break;
             default:
                 _ = NotifySpecialNodeAsync(node, fromNode, _enemyDurationMultiplier);

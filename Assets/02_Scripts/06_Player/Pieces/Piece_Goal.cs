@@ -3,12 +3,17 @@ using UnityEngine;
 
 public class Piece_Goal : Piece_Base
 {
+    [SerializeField] private SpatialNodeEventCHSO _onNotifyFromNode;    //PlayerController 발행
+
     private MeshRenderer[] _piecesRends;
     private Vector3[] _piecesOriginLocalPos;
 
     private float _bombMoveRange = 0.1f;
     private bool _isSpread = false;
+    private bool _isPlayerHere = false;
+    private bool _isGetKeyAll = false;
 
+    private SpatialNode _prevPlayerNode;
     private void Awake()
     {
         _piecesRends = GetComponentsInChildren<MeshRenderer>();
@@ -21,16 +26,20 @@ public class Piece_Goal : Piece_Base
     private void OnEnable()
     {
         Managers.Stage.onGetAllKeys += HandleGetAllKeys;
+        _onNotifyFromNode.onEvent += RegisterFromNode;
 
     }
     private void OnDisable()
     {
         Managers.Stage.onGetAllKeys -= HandleGetAllKeys;
+        _onNotifyFromNode.onEvent -= RegisterFromNode;
     }
     public override void OnSpawn()
     {
         base.OnSpawn();
         ResetPieces();
+        _isPlayerHere = false;
+        _isGetKeyAll = false;
         _isSpread = false;
         UpDownIdle();
     }
@@ -48,7 +57,15 @@ public class Piece_Goal : Piece_Base
     //이벤트 핸들러
     protected override void HandleNotify(SpatialNode node)
     {
-        if (node != GroundNode) return;
+        if (node != GroundNode)
+        {
+            if (_prevPlayerNode == GroundNode) _isPlayerHere = false;
+            if (_isGetKeyAll && !_isPlayerHere) DeSpreadAllDirection();
+            return;
+        }
+        _isPlayerHere = true;
+
+
         if (_isSpread) return;
 
         Managers.Stage.StageClearRequest();
@@ -62,12 +79,22 @@ public class Piece_Goal : Piece_Base
             SpreadAllDirection();
         }
     }
-    private void HandleGetAllKeys()
+    private void HandleGetAllKeys(bool isGetAll)
     {
-        DeSpreadAllDirection();
+        if (isGetAll)
+        {
+            _isGetKeyAll = true;
+            if (!_isPlayerHere) DeSpreadAllDirection();
+        }
+        else
+        {
+
+            SpreadAllDirection();
+        }
     }
     private void SpreadAllDirection()
     {
+        _isGetKeyAll = false;
         _isSpread = true;
 
         Vector3[] meshCenter = new Vector3[_piecesRends.Length];
@@ -116,7 +143,10 @@ public class Piece_Goal : Piece_Base
             .SetLoops(-1, LoopType.Yoyo)
             .SetRelative();
     }
-
+    private void RegisterFromNode(SpatialNode node)
+    {
+        _prevPlayerNode = node;
+    }
     public override void ReturnPool()
     {
         Managers.Pool.Despawn(poolData, this);
