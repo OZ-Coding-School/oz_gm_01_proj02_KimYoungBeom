@@ -131,7 +131,7 @@ public class PlayerController : PoolableComponent
     }
     public void Init(SpatialNode startNode, bool isAvatar)
     {
-        InitAtDespawn();
+        //InitAtDespawn();
         SetCurrentNode(startNode);
         _isAvatar = isAvatar;
         NotifySpecialNode(CurrentNode, null);
@@ -445,6 +445,8 @@ public class PlayerController : PoolableComponent
         _isRotate = false;
         _isLastMove = false;
         _isDeath = false;
+        CurrentNode = null;
+
         Managers.Input.IsPlayerDeath = false;
 
         if (_anim != null)

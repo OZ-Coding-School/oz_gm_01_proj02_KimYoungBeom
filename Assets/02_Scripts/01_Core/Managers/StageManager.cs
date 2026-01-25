@@ -219,7 +219,6 @@ public class StageManager : MonoBehaviour
     {
         if (!IsStageTurn) return;
 
-
         List<Awaitable> tasks = new List<Awaitable>();
         foreach (var obj in _movableList)
         {

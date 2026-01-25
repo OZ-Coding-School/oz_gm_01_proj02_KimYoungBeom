@@ -46,6 +46,8 @@ public class LevelGenerator : MonoBehaviour
 
         _startNode = null;
         _finishNode = null;
+        _player = null;
+        _avatar = null;
         _goal = null;
 
 
@@ -59,7 +61,7 @@ public class LevelGenerator : MonoBehaviour
             SpawnPieces(node);
         }
         _player.Init(_startNode);
-        _avatar.Init(_avatarNode, true);
+        if (_avatar != null) _avatar.Init(_avatarNode, true);
 
         StartStageIntroCameraMove(doIntro);
     }

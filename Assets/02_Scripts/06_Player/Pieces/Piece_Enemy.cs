@@ -1,6 +1,7 @@
 using Unity.Behavior;
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 public class Piece_Enemy : Piece_Base, IStageMovable
 {
@@ -56,6 +57,9 @@ public class Piece_Enemy : Piece_Base, IStageMovable
         _onNotifyFromNode.onEvent -= RegisterFromNode;
         _onNotifyAvatar.onEvent -= RecognizePlayer;
         _onNotifyDeath.onEvent -= HandleAvatarDeath;
+
+        Array.Clear(_notifyNodes, 0, _notifyNodes.Length);
+        _prevPlayerNode = null;
 
         transform.DOKill();
         //애니메이션 정리
