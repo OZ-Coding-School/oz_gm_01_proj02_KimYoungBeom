@@ -11,6 +11,10 @@ public class BtnAndViewController : MonoBehaviour
     [SerializeField] private Button _topViewBtn;
     [SerializeField] private Button _firstViewBtn;
     [SerializeField] private TextMeshProUGUI _topText;
+    //슬라이더
+    [SerializeField] private Slider _slider;
+    [SerializeField] private GameObject _rootSlider;
+
 
     [Header("이벤트 구독")]
     [SerializeField] private BoolEventCHSO _onPlayerMoving;
@@ -34,6 +38,11 @@ public class BtnAndViewController : MonoBehaviour
         Managers.Camera.onViewChanged += HandleViewChanged;
 
         _onPlayerMoving.onEvent += OnPlayerMoving;
+
+        _slider.onValueChanged.RemoveAllListeners();
+        _slider.onValueChanged.AddListener(HandleSliderChange);
+        _rootSlider.SetActive(false);
+        _slider.value = Managers.Data.CamSensitivity;
     }
     private void OnDisable()
     {
@@ -45,6 +54,9 @@ public class BtnAndViewController : MonoBehaviour
         Managers.Camera.onViewChanged -= HandleViewChanged;
 
         _onPlayerMoving.onEvent -= OnPlayerMoving;
+
+        _slider.onValueChanged.RemoveAllListeners();
+
     }
     private void InitBtns()
     {
@@ -66,8 +78,13 @@ public class BtnAndViewController : MonoBehaviour
     {
         _topText.SetText(TOP_TEXT);
         _firstViewBtn.gameObject.SetActive(true);
+        _rootSlider.SetActive(false);
     }
 
+    private void HandleSliderChange(float value)
+    {
+        Managers.Data.SetSensitivity(value);
+    }
     private void HandleViewChanged(EViewMode mode)
     {
         _currentView = mode;
@@ -118,6 +135,7 @@ public class BtnAndViewController : MonoBehaviour
         {
             _topText.SetText(QUARTER_TEXT);
             _firstViewBtn.gameObject.SetActive(false);
+            _rootSlider.SetActive(true);
             _ = ChangeViewAfterEndOfFrame(EViewMode.FirstPerson);
         }
     }
@@ -130,7 +148,7 @@ public class BtnAndViewController : MonoBehaviour
         {
             _topText.SetText(TOP_TEXT);
             _firstViewBtn.gameObject.SetActive(true);
-
+            _rootSlider.SetActive(false);
             _ = ChangeViewAfterEndOfFrame(EViewMode.Quarter);
         }
     }

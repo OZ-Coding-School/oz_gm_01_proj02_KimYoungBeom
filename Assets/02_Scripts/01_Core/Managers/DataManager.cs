@@ -49,6 +49,7 @@ public class DataManager : MonoBehaviour
     {
         SaveData data = new SaveData();
         data.clearedStageNum = ClearedStageNum;
+        data.camSensitivity = CamSensitivity;
 
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(SavePath, json);
@@ -66,6 +67,7 @@ public class DataManager : MonoBehaviour
         SaveData data = JsonUtility.FromJson<SaveData>(json);
 
         ClearedStageNum = data.clearedStageNum;
+        CamSensitivity = data.camSensitivity;
     }
 
     private void OnApplicationQuit()
@@ -79,5 +81,6 @@ public class DataManager : MonoBehaviour
 [System.Serializable]
 public class SaveData
 {
-    public int clearedStageNum;
+    public int clearedStageNum = 1;
+    public float camSensitivity = 3.0f;
 }

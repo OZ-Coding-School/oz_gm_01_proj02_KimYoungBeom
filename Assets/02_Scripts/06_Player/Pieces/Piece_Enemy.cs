@@ -1,7 +1,6 @@
 using Unity.Behavior;
 using UnityEngine;
 using DG.Tweening;
-using System.Collections.Generic;
 
 public class Piece_Enemy : Piece_Base, IStageMovable
 {
