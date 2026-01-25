@@ -25,6 +25,8 @@ public class CameraManager : MonoBehaviour
     private float _panVel, _tiltVel;
     private float _targetPan, _targetTilt;
     private float _currentSensitivity;
+    private bool _isMouseActive = true;
+    private bool _isFPViewBlending = false;
 
     public bool IsBlending { get; private set; } = false;
     public EViewMode CurrentViewMode => _currentViewMode;
@@ -41,7 +43,7 @@ public class CameraManager : MonoBehaviour
     }
     private void Update()
     {
-        ApplyLinearSmoothing();
+        if (!_isMouseActive) ApplyLinearSmoothing();
     }
     private void OnEnable()
     {
@@ -72,6 +74,7 @@ public class CameraManager : MonoBehaviour
     private void OnBlendFinished(ICinemachineCamera from, ICinemachineCamera to)
     {
         if (!(_currentViewMode == EViewMode.Intro)) IsBlending = false;
+        if (_currentViewMode == EViewMode.FirstPerson) _isFPViewBlending = false;
         if (_currentViewMode == EViewMode.Top)
         {
             _vCams[5].gameObject.SetActive(true);
@@ -82,7 +85,7 @@ public class CameraManager : MonoBehaviour
     }
     private void OnLook(Vector2 delta)
     {
-        if (_currentViewMode != EViewMode.FirstPerson) return;
+        if (_currentViewMode != EViewMode.FirstPerson || _isMouseActive || _isFPViewBlending) return;
 
         _targetPan += delta.x * _currentSensitivity;
         _targetTilt -= delta.y * _currentSensitivity;
@@ -111,6 +114,11 @@ public class CameraManager : MonoBehaviour
     #endregion
 
     #region 외부호출 함수
+    public void ToggleMouseActive()
+    {
+        _isMouseActive = !_isMouseActive;
+        Cursor.lockState = _isMouseActive ? CursorLockMode.None : CursorLockMode.Locked;
+    }
     public float GetPanValue() => _currentPan;
     public void SetPlayerTarget(PlayerController player)
     {
@@ -157,7 +165,15 @@ public class CameraManager : MonoBehaviour
             bool isTarget = (kvp.Key == mode);
             vcam.Priority = isTarget ? 10 : 0;
         }
-
+        if (mode == EViewMode.FirstPerson)
+        {
+            _isFPViewBlending = true;
+            if (_isMouseActive) ToggleMouseActive();
+        }
+        else
+        {
+            if (!_isMouseActive) ToggleMouseActive();
+        }
         _currentViewMode = mode;
     }
     #endregion

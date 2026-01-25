@@ -54,6 +54,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 893d322bf64fb9b4e97b6167311b6fce, type: 2}
   - {fileID: 11400000, guid: 3f793c5b8f458b046a706d808efcc99a, type: 2}
   - {fileID: 11400000, guid: a5eb2566f1e16104b8d3e6c2a4d772ef, type: 2}
+  - {fileID: 11400000, guid: d6760edb3542c8948ab3d8505c8503b2, type: 2}
   _onPlayerTurnEnd: {fileID: 11400000, guid: 851c46520da9a4648af6765ddf15acad, type: 2}
   _onExecuteStageTurn: {fileID: 11400000, guid: 5239171ba3ec26d4fae8b60698c632c6, type: 2}
   _onClearStacksRequest: {fileID: 11400000, guid: a5c217e8d41af6c48944a9532e0cc1df, type: 2}

@@ -131,7 +131,7 @@ public class PlayerController : PoolableComponent
     }
     public void Init(SpatialNode startNode, bool isAvatar)
     {
-        InitAtDespawn();
+        //InitAtDespawn();
         SetCurrentNode(startNode);
         _isAvatar = isAvatar;
         NotifySpecialNode(CurrentNode, null);
@@ -170,7 +170,7 @@ public class PlayerController : PoolableComponent
     }
     private void HandleStageTurnEnd()
     {
-        transform.SetParent(Managers.Pool.transform);
+        //transform.SetParent(Managers.Pool.transform);
     }
     private void HandleStageClear()
     {
@@ -250,9 +250,14 @@ public class PlayerController : PoolableComponent
 
         if (_currentView == EViewMode.Top)
         {
-
-            if (!_virtualNode.MovableDirections.Contains(direction) && _isFirstTopTurn) return;
-            if (!CurrentNode.MovableDirections.Contains(direction)) return;
+            if (_isFirstTopTurn)
+            {
+                if (!_virtualNode.MovableDirections.Contains(direction)) return;
+            }
+            else
+            {
+                if (!CurrentNode.MovableDirections.Contains(direction)) return;
+            }
 
             Vector2Int targetKey = CurrentNode.GridCoordinate + direction;
             ExecuteCommandByKey(targetKey, direction);
@@ -285,6 +290,11 @@ public class PlayerController : PoolableComponent
             IsMoving = true;
             IsGoTo = true;
             _onPlayerMoving.Raised(IsMoving);
+
+            if (transform.parent != Managers.Pool.transform)
+            {
+                transform.SetParent(Managers.Pool.transform);
+            }
             MoveCommand moveCmd = new MoveCommand(this, CurrentNode, targetNode, _moveDuration);
 
             moveCmd.Execute();
@@ -366,6 +376,10 @@ public class PlayerController : PoolableComponent
                 break;
         }
     }
+    public void NotifySpecialNode(SpatialNode node)
+    {
+        NotifySpecialNode(node, null);
+    }
     private async Awaitable NotifySpecialNodeAsync(SpatialNode node, SpatialNode fromNode, float durationMultiplier)
     {
         try
@@ -423,6 +437,7 @@ public class PlayerController : PoolableComponent
     }
     private void InitAtDespawn()
     {
+        if (Managers.Pool != null && transform.parent != Managers.Pool.transform) transform.SetParent(Managers.Pool.transform);
         DG.Tweening.DOTween.KillAll();
         IsMoving = false;
         IsGoTo = false;
@@ -430,6 +445,8 @@ public class PlayerController : PoolableComponent
         _isRotate = false;
         _isLastMove = false;
         _isDeath = false;
+        CurrentNode = null;
+
         Managers.Input.IsPlayerDeath = false;
 
         if (_anim != null)
@@ -445,6 +462,7 @@ public class PlayerController : PoolableComponent
     {
         _currentView = EViewMode.Quarter;
         _stateMC.ChangeState(_idleState);
+
     }
 
     public override void OnDespawn()

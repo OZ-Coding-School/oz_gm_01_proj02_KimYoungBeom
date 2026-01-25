@@ -58,16 +58,6 @@ MonoBehaviour:
     nodeShape: 0
     nodeState: 0
     nodeTrail: 0
-  - worldCoord: {x: -3, y: -2, z: 2}
-    gridCoord: {x: -3, y: 2}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 0
-    nodeState: 0
-    nodeTrail: 0
   - worldCoord: {x: -1, y: 0, z: 1}
     gridCoord: {x: -1, y: 1}
     allowedDirs:
@@ -76,44 +66,6 @@ MonoBehaviour:
     - {x: -1, y: 0}
     - {x: 1, y: 0}
     nodeShape: 0
-    nodeState: 0
-    nodeTrail: 0
-  - worldCoord: {x: -2, y: 6, z: 1}
-    gridCoord: {x: -2, y: 1}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 0
-    nodeState: 0
-    nodeTrail: 0
-  - worldCoord: {x: -1, y: 6, z: 0}
-    gridCoord: {x: -1, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 0
-    nodeState: 0
-    nodeTrail: 0
-  - worldCoord: {x: 0, y: 6, z: 1}
-    gridCoord: {x: 0, y: 1}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: 0, y: -1}
-    - {x: -1, y: 0}
-    - {x: 1, y: 0}
-    nodeShape: 0
-    nodeState: 0
-    nodeTrail: 7
-  - worldCoord: {x: 0, y: 6, z: 0}
-    gridCoord: {x: 0, y: 0}
-    allowedDirs:
-    - {x: 0, y: 1}
-    - {x: -1, y: 0}
-    nodeShape: 4
     nodeState: 0
     nodeTrail: 0
   - worldCoord: {x: 0, y: 0, z: 1}

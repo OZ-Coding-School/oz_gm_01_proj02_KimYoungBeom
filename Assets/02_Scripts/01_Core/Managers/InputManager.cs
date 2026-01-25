@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
@@ -33,6 +35,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.FirstView.performed += OnFirstView;
         _inputActions.Player.Look.performed += OnLook;
         _inputActions.Player.QuarterView.performed += OnQuarterView;
+        _inputActions.Player.Attack.performed += OnClickAtFPView;
     }
     private void OnDisable()
     {
@@ -45,6 +48,7 @@ public class InputManager : MonoBehaviour
         _inputActions.Player.FirstView.performed -= OnFirstView;
         _inputActions.Player.Look.performed -= OnLook;
         _inputActions.Player.QuarterView.performed -= OnQuarterView;
+        _inputActions.Player.Attack.performed -= OnClickAtFPView;
 
         _inputActions.Disable();
     }
@@ -80,6 +84,26 @@ public class InputManager : MonoBehaviour
     {
         if (IsPlayerDeath || Managers.Stage.IsStageTurn) return;
         onQuarterViewEvent?.Invoke();
+    }
+    private void ExecuteClickAtFPView()
+    {
+        if (Managers.Camera.CurrentViewMode != EViewMode.FirstPerson) return;
+        Managers.Camera.ToggleMouseActive();
+    }
+    private void OnClickAtFPView(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        Vector2 pointerPosition = Pointer.current.position.ReadValue();
+        PointerEventData eventData = new PointerEventData(EventSystem.current)
+        {
+            position = pointerPosition
+        };
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+        if (results.Count > 0) return;
+
+        ExecuteClickAtFPView();
     }
     private void OnQuarterView(InputAction.CallbackContext context)
     {

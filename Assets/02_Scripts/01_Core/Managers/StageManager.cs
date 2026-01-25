@@ -18,6 +18,7 @@ public class StageManager : MonoBehaviour
     private readonly SpatialNode[,] _nodeMap2D = new SpatialNode[Defines.MAX_NODE_COUNT, Defines.MAX_NODE_COUNT];
     private readonly List<IStageMovable> _movableList = new List<IStageMovable>();
     private bool _isProcessing = false;
+    private bool _isStageClear = false;
 
     public event Action onTurnCountChange;
     public event Action onStageTurnEnd;
@@ -91,6 +92,8 @@ public class StageManager : MonoBehaviour
     //InputManager 호출(false로)
     public void RequestGenerate(int index, bool doIntro)
     {
+        _isStageClear = false;
+
         _onClearStacksRequest.SendEventMessage();
         if (_generator == null) return;
         if (index < 0) return;
@@ -174,6 +177,7 @@ public class StageManager : MonoBehaviour
     //Pieces 호출
     public void StageClearRequest()
     {
+        _isStageClear = true;
         onClearRequest?.Invoke();
     }
     public void DeactiveButton()
@@ -214,6 +218,7 @@ public class StageManager : MonoBehaviour
     private async void StartStageTurn()
     {
         if (!IsStageTurn) return;
+
         List<Awaitable> tasks = new List<Awaitable>();
         foreach (var obj in _movableList)
         {
@@ -234,6 +239,8 @@ public class StageManager : MonoBehaviour
     private void HandlePlayerTurnEnd()
     {
         if (IsStageTurn) return;
+        if (_isStageClear) return;
+
         IsStageTurn = true;
 
         StartStageTurn();

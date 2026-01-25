@@ -15,8 +15,10 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private PoolableObjSO _buttonPoolData;
 
     private SpatialNode _startNode;
+    private SpatialNode _avatarNode;
     private SpatialNode _finishNode;
     private PlayerController _player;
+    private PlayerController _avatar;
 
     private Piece_Goal _goal;
     private CancellationTokenSource _currentCts;
@@ -44,6 +46,8 @@ public class LevelGenerator : MonoBehaviour
 
         _startNode = null;
         _finishNode = null;
+        _player = null;
+        _avatar = null;
         _goal = null;
 
 
@@ -56,6 +60,8 @@ public class LevelGenerator : MonoBehaviour
 
             SpawnPieces(node);
         }
+        _player.Init(_startNode);
+        if (_avatar != null) _avatar.Init(_avatarNode, true);
 
         StartStageIntroCameraMove(doIntro);
     }
@@ -94,7 +100,6 @@ public class LevelGenerator : MonoBehaviour
             case ENodeState.Start:
                 _startNode = node;
                 _player = Managers.Pool.Spawn<PlayerController>(_playerPoolData, _startNode.WorldCoordinate);
-                _player.Init(_startNode);
                 break;
             case ENodeState.Finish:
                 _finishNode = node;
@@ -120,8 +125,8 @@ public class LevelGenerator : MonoBehaviour
                 CheckAndSetMovableList(enemy);
                 break;
             case ENodeState.Avatar:
-                var avatar = Managers.Pool.Spawn<PlayerController>(_avatarPoolData, _startNode.WorldCoordinate);
-                avatar.Init(node, true);
+                _avatarNode = node;
+                _avatar = Managers.Pool.Spawn<PlayerController>(_avatarPoolData, _startNode.WorldCoordinate);
                 break;
             case ENodeState.Button:
                 Managers.Stage.AddRemainingKeyCount();
